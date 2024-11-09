@@ -21,8 +21,7 @@ void NodeListViewModel::NodeInfo::update(MonitorBackend& backend) noexcept {
     if(not parameters) {
         if(auto nodeId{node.id()}) {
             if(auto trackerModel{backend.trackerModel()}) {
-                parameters =
-                  extract(trackerModel).nodeParameters(extract(nodeId));
+                parameters = extract(trackerModel).nodeParameters(extract(nodeId));
             }
         }
     }
@@ -76,8 +75,7 @@ void NodeListViewModel::HostInfo::update(MonitorBackend& backend) noexcept {
     if(not parameters) {
         if(auto hostId{host.id()}) {
             if(auto trackerModel{backend.trackerModel()}) {
-                parameters =
-                  extract(trackerModel).hostParameters(extract(hostId));
+                parameters = extract(trackerModel).hostParameters(extract(hostId));
             }
         }
     }
@@ -92,9 +90,8 @@ auto NodeListViewModel::Data::totalCount() const noexcept -> int {
 }
 //------------------------------------------------------------------------------
 template <typename Function>
-auto NodeListViewModel::Data::forHost(
-  eagine::host_id_t hostId,
-  Function function) const -> bool {
+auto NodeListViewModel::Data::forHost(eagine::host_id_t hostId, Function function)
+  const -> bool {
     const auto hostPos = hosts.find(hostId);
     if(hostPos != hosts.end()) {
         const auto& hostInfo = hostPos->second;
@@ -253,15 +250,15 @@ void NodeListViewModel::Data::fixupHierarchy(
         for(auto& instEntry : hostInfo.instances) {
             auto& instInfo = instEntry.second;
 
-            instInfo.nodes.erase_if([this, nodeId, instId, &instEntry](
-                                      auto& nodeEntry) {
-                if((instEntry.first != instId) and (nodeEntry.first == nodeId)) {
-                    node2Inst.erase(nodeId);
-                    return true;
-                }
-                node2Inst[nodeEntry.first] = instEntry.first;
-                return false;
-            });
+            instInfo.nodes.erase_if(
+              [this, nodeId, instId, &instEntry](auto& nodeEntry) {
+                  if((instEntry.first != instId) and (nodeEntry.first == nodeId)) {
+                      node2Inst.erase(nodeId);
+                      return true;
+                  }
+                  node2Inst[nodeEntry.first] = instEntry.first;
+                  return false;
+              });
         }
 
         hostInfo.instances.erase_if(
@@ -334,8 +331,7 @@ auto NodeListViewModel::Data::updateNode(
                 inst2Host[instId] = hostId;
 
                 if(prevInstId) {
-                    for(auto& [otherNodeId, otherNodeInfo] :
-                        prevInstInfo.nodes) {
+                    for(auto& [otherNodeId, otherNodeInfo] : prevInstInfo.nodes) {
                         auto& nodeInfo = instInfo.nodes[otherNodeId];
                         nodeInfo = std::move(otherNodeInfo);
                         nodeInfo.update(backend);
@@ -402,9 +398,8 @@ auto NodeListViewModel::Data::removeNode(eagine::identifier_t nodeId) -> bool {
     return erased > 0;
 }
 //------------------------------------------------------------------------------
-auto NodeListViewModel::Data::updateInst(
-  MonitorBackend&,
-  const remote_inst& inst) -> int {
+auto NodeListViewModel::Data::updateInst(MonitorBackend&, const remote_inst& inst)
+  -> int {
     const auto instId = inst.id().value_or(0U);
     const auto hostId = instId ? inst.host().id().value_or(0U) : 0U;
 
@@ -431,9 +426,8 @@ auto NodeListViewModel::Data::updateInst(
     return -1;
 }
 //------------------------------------------------------------------------------
-auto NodeListViewModel::Data::updateHost(
-  MonitorBackend&,
-  const remote_host& host) -> int {
+auto NodeListViewModel::Data::updateHost(MonitorBackend&, const remote_host& host)
+  -> int {
     const auto hostId = host.id().value_or(0U);
     const auto hostPos = hosts.find(hostId);
     if(hostPos != hosts.end()) {
@@ -507,9 +501,7 @@ void NodeListViewModel::afterHierarchyChanged() {
             emit itemUnselected();
         } else {
             emit itemSelected(
-              _model.selectedHostId,
-              _model.selectedInstId,
-              _model.selectedNodeId);
+              _model.selectedHostId, _model.selectedInstId, _model.selectedNodeId);
         }
     }
     emit modelReset({});
@@ -631,8 +623,7 @@ auto NodeListViewModel::index(int row, int, const QModelIndex&) const
         if(skip < subtotal) {
             for(auto& [instId, inst] : host.instances) {
                 if(not skip) {
-                    return QAbstractItemModel::createIndex(
-                      row, instItem, instId);
+                    return QAbstractItemModel::createIndex(row, instItem, instId);
                 }
                 skip--;
                 subtotal = inst.subCount();
@@ -660,8 +651,7 @@ auto NodeListViewModel::rowCount(const QModelIndex&) const -> int {
     return _model.totalCount();
 }
 //------------------------------------------------------------------------------
-auto NodeListViewModel::itemKindData(const remote_node& node) const
-  -> QVariant {
+auto NodeListViewModel::itemKindData(const remote_node& node) const -> QVariant {
     switch(node.kind()) {
         case eagine::msgbus::node_kind::router:
             return {"Router"};
@@ -675,28 +665,23 @@ auto NodeListViewModel::itemKindData(const remote_node& node) const
     return {"UnknownNode"};
 }
 //------------------------------------------------------------------------------
-auto NodeListViewModel::identifierData(const remote_node& node) const
-  -> QVariant {
+auto NodeListViewModel::identifierData(const remote_node& node) const -> QVariant {
     return {QString::number(extract(node.id()))};
 }
 //------------------------------------------------------------------------------
-auto NodeListViewModel::displayNameData(const remote_host& host) const
-  -> QVariant {
+auto NodeListViewModel::displayNameData(const remote_host& host) const -> QVariant {
     return {c_str(host.name())};
 }
 //------------------------------------------------------------------------------
-auto NodeListViewModel::displayNameData(const remote_inst& inst) const
-  -> QVariant {
+auto NodeListViewModel::displayNameData(const remote_inst& inst) const -> QVariant {
     return {c_str(inst.application_name())};
 }
 //------------------------------------------------------------------------------
-auto NodeListViewModel::displayNameData(const remote_node& node) const
-  -> QVariant {
+auto NodeListViewModel::displayNameData(const remote_node& node) const -> QVariant {
     return {c_str(node.display_name())};
 }
 //------------------------------------------------------------------------------
-auto NodeListViewModel::descriptionData(const remote_node& node) const
-  -> QVariant {
+auto NodeListViewModel::descriptionData(const remote_node& node) const -> QVariant {
     return {c_str(node.description())};
 }
 //------------------------------------------------------------------------------
@@ -721,8 +706,7 @@ auto NodeListViewModel::isResponsiveData(const remote_node& node) const
     return {};
 }
 //------------------------------------------------------------------------------
-auto NodeListViewModel::data(const QModelIndex& index, int role) const
-  -> QVariant {
+auto NodeListViewModel::data(const QModelIndex& index, int role) const -> QVariant {
     QVariant result;
     if(role == NodeListViewModel::identifierRole) {
         result = {QString::number(index.internalId())};

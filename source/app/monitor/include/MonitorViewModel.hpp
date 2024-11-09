@@ -20,8 +20,8 @@ class MonitorViewModel
     Q_OBJECT
 
     Q_PROPERTY(NodeListViewModel* nodeList READ getNodeListViewModel CONSTANT)
-    Q_PROPERTY(SelectedItemViewModel* selectedItem READ getSelectedItemViewModel
-                 CONSTANT)
+    Q_PROPERTY(
+      SelectedItemViewModel* selectedItem READ getSelectedItemViewModel CONSTANT)
 public:
     MonitorViewModel(MonitorBackend&);
 

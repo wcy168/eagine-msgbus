@@ -93,8 +93,8 @@ auto router_pending::password_is_required() const noexcept -> bool {
 }
 //------------------------------------------------------------------------------
 auto router_pending::should_request_password() const noexcept -> bool {
-    return is_valid_id(_id) and password_is_required() and
-           _should_request_pwd and not _password_verified;
+    return is_valid_id(_id) and password_is_required() and _should_request_pwd and
+           not _password_verified;
 }
 //------------------------------------------------------------------------------
 auto router_pending::maybe_router() const noexcept -> bool {
@@ -177,9 +177,7 @@ auto router_pending::_handle_msg(
         // this is a special message containing non-endpoint id
         if(msg_id.has_method("announceId")) {
             _id = msg.source_id;
-            parent.log_debug("received id ${id}")
-              .tag("announceId")
-              .arg("id", _id);
+            parent.log_debug("received id ${id}").tag("announceId").arg("id", _id);
             return true;
         }
         if(msg_id.has_method("encRutrPwd")) {
@@ -228,8 +226,7 @@ void router_endpoint_info::add_subscription(const message_id msg_id) noexcept {
     message_id_list_remove(_unsubscriptions, msg_id);
 }
 //------------------------------------------------------------------------------
-void router_endpoint_info::remove_subscription(
-  const message_id msg_id) noexcept {
+void router_endpoint_info::remove_subscription(const message_id msg_id) noexcept {
     message_id_list_remove(_subscriptions, msg_id);
     message_id_list_add(_unsubscriptions, msg_id);
 }
@@ -328,12 +325,7 @@ void adjacent_node::enqueue_route_messages(
   some_true_atomic& something_done) noexcept {
     if(_connection) [[likely]] {
         _route_messages_work = {
-          parent,
-          *this,
-          incoming_id,
-          message_age_inc,
-          completed,
-          something_done};
+          parent, *this, incoming_id, message_age_inc, completed, something_done};
         workers.enqueue(_route_messages_work);
     }
 }
@@ -417,8 +409,7 @@ auto adjacent_node::send(
 auto adjacent_node::route_messages(
   router& parent,
   const endpoint_id_t incoming_id,
-  const std::chrono::steady_clock::duration message_age_inc) noexcept
-  -> work_done {
+  const std::chrono::steady_clock::duration message_age_inc) noexcept -> work_done {
 
     if(_connection) [[likely]] {
         const auto handler{[&](
@@ -485,8 +476,7 @@ void adjacent_node::clear_allow_list() noexcept {
 //------------------------------------------------------------------------------
 // parent_router
 //------------------------------------------------------------------------------
-inline void parent_router::reset(
-  shared_holder<connection> a_connection) noexcept {
+inline void parent_router::reset(shared_holder<connection> a_connection) noexcept {
     _connection = std::move(a_connection);
     _confirmed_id = 0;
 }
@@ -584,8 +574,7 @@ auto parent_router::send(
 //------------------------------------------------------------------------------
 auto parent_router::route_messages(
   router& parent,
-  const std::chrono::steady_clock::duration message_age_inc) noexcept
-  -> work_done {
+  const std::chrono::steady_clock::duration message_age_inc) noexcept -> work_done {
 
     if(_connection) [[likely]] {
         const auto handler{[&, this](
@@ -619,8 +608,7 @@ auto router_nodes::find(const endpoint_id_t id) noexcept
     return eagine::find(_nodes, id).ref();
 }
 //------------------------------------------------------------------------------
-auto router_nodes::find_outgoing(const endpoint_id_t target_id)
-  -> endpoint_id_t {
+auto router_nodes::find_outgoing(const endpoint_id_t target_id) -> endpoint_id_t {
     return eagine::find(_endpoint_idx, target_id).or_default();
 }
 //------------------------------------------------------------------------------
@@ -632,9 +620,7 @@ void router_nodes::add_acceptor(shared_holder<acceptor> an_acceptor) noexcept {
     _acceptors.emplace_back(std::move(an_acceptor));
 }
 //------------------------------------------------------------------------------
-void router_nodes::_adopt_pending(
-  router& parent,
-  router_pending& pending) noexcept {
+void router_nodes::_adopt_pending(router& parent, router_pending& pending) noexcept {
     const auto id{pending.assigned_id()};
     parent.log_info("adopting pending connection from ${cnterpart} ${id}")
       .tag("adPendConn")
@@ -736,8 +722,8 @@ auto router_nodes::remove_timeouted(const main_ctx_object& user) noexcept
     return something_done;
 }
 //------------------------------------------------------------------------------
-auto router_nodes::is_disconnected(
-  const endpoint_id_t endpoint_id) const noexcept -> bool {
+auto router_nodes::is_disconnected(const endpoint_id_t endpoint_id) const noexcept
+  -> bool {
     return eagine::find(_recently_disconnected, endpoint_id)
       .transform([](auto& node) { return not node.is_expired(); })
       .or_false();
@@ -750,8 +736,7 @@ void router_nodes::mark_disconnected(const endpoint_id_t endpoint_id) noexcept {
             _recently_disconnected.erase(node.position());
         }
     }
-    _recently_disconnected.erase_if(
-      [&](auto& p) { return p.second.is_expired(); });
+    _recently_disconnected.erase_if([&](auto& p) { return p.second.is_expired(); });
     _recently_disconnected.emplace(endpoint_id, std::chrono::seconds{15});
 }
 //------------------------------------------------------------------------------
@@ -761,8 +746,7 @@ auto router_nodes::remove_disconnected(const main_ctx_object& user) noexcept
 
     for(auto& [node_id, node] : _nodes) {
         if(node.should_disconnect()) [[unlikely]] {
-            user.log_debug("removing disconnected connection")
-              .tag("rmDiscConn");
+            user.log_debug("removing disconnected connection").tag("rmDiscConn");
             node.cleanup_connection();
         }
     }
@@ -872,8 +856,7 @@ auto router_stats::update_stats() noexcept
 
         _stats.message_age_us = avg_msg_age_us;
 
-        const bool flow_info_changed{
-          _flow_info.avg_msg_age_ms != avg_msg_age_ms};
+        const bool flow_info_changed{_flow_info.avg_msg_age_ms != avg_msg_age_ms};
         _flow_info.set_average_message_age(
           std::chrono::milliseconds{avg_msg_age_ms});
         if(flow_info_changed) {
@@ -987,8 +970,8 @@ auto router_context::add_certificate_pem(const memory::const_block blk) noexcept
     return false;
 }
 //------------------------------------------------------------------------------
-auto router_context::add_ca_certificate_pem(
-  const memory::const_block blk) noexcept -> bool {
+auto router_context::add_ca_certificate_pem(const memory::const_block blk) noexcept
+  -> bool {
     if(_context) [[likely]] {
         const std::unique_lock lk_ctx{_context_lock};
         _context->add_ca_certificate_pem(blk);
@@ -1059,12 +1042,11 @@ auto router_blobs::process_blobs(
   const endpoint_id_t parent_id,
   router& parent) noexcept -> work_done {
     some_true something_done{_blobs.handle_complete() > 0};
-    const auto resend_request{
-      [&](message_id msg_id, message_view request) -> bool {
-          return parent._route_message(msg_id, parent_id, request);
-      }};
-    something_done(_blobs.update(
-      {construct_from, resend_request}, min_connection_data_size));
+    const auto resend_request{[&](message_id msg_id, message_view request) -> bool {
+        return parent._route_message(msg_id, parent_id, request);
+    }};
+    something_done(
+      _blobs.update({construct_from, resend_request}, min_connection_data_size));
 
     return something_done;
 }
@@ -1085,8 +1067,7 @@ void router_blobs::handle_fragment(
   const message_view& message,
   const fetch_handler handle_fetch) noexcept {
     if(_blobs.process_incoming(
-         make_callable_ref<&router_blobs::_get_blob_target_io>(this),
-         message)) {
+         make_callable_ref<&router_blobs::_get_blob_target_io>(this), message)) {
         _blobs.fetch_all(handle_fetch);
     }
 }
@@ -1104,9 +1085,8 @@ void router_blobs::handle_prepare(const message_view& message) noexcept {
 router::router(main_ctx_parent parent) noexcept
   : main_ctx_object{"MsgBusRutr", parent}
   , _context{make_context(*this)}
-  , _password_is_required{app_config()
-                            .get<bool>("msgbus.router.requires_password")
-                            .value_or(false)} {
+  , _password_is_required{
+      app_config().get<bool>("msgbus.router.requires_password").value_or(false)} {
     declare_state("multiThred", "multiThrd", "singleThrd");
     _ids.setup_from_config(*this);
     _ids.set_description(*this);
@@ -1144,8 +1124,7 @@ void router::add_ca_certificate_pem(const memory::const_block blk) noexcept {
     _context.add_ca_certificate_pem(blk);
 }
 //------------------------------------------------------------------------------
-auto router::add_acceptor(shared_holder<acceptor> an_acceptor) noexcept
-  -> bool {
+auto router::add_acceptor(shared_holder<acceptor> an_acceptor) noexcept -> bool {
     if(an_acceptor) {
         log_info("adding connection acceptor")
           .tag("addAccptor")
@@ -1269,8 +1248,7 @@ auto router::_handle_subscribed(
   const endpoint_id_t incoming_id,
   const message_view& message) noexcept -> message_handling_result {
     message_id sub_msg_id{};
-    if(default_deserialize_message_type(sub_msg_id, message.content()))
-      [[likely]] {
+    if(default_deserialize_message_type(sub_msg_id, message.content())) [[likely]] {
         log_debug("endpoint ${source} subscribes to ${message}")
           .arg("source", message.source_id)
           .arg("message", sub_msg_id);
@@ -1308,8 +1286,7 @@ auto router::_handle_not_not_a_router(
   adjacent_node& node,
   const message_view& message) noexcept -> message_handling_result {
     if(incoming_id == message.source_id) {
-        log_debug("node ${source} is not a router")
-          .arg("source", message.source_id);
+        log_debug("node ${source} is not a router").arg("source", message.source_id);
         const std::unique_lock lk{_router_lock};
         node.mark_not_a_router();
     }
@@ -1320,8 +1297,7 @@ auto router::_handle_not_subscribed(
   const endpoint_id_t incoming_id,
   const message_view& message) noexcept -> message_handling_result {
     message_id sub_msg_id{};
-    if(default_deserialize_message_type(sub_msg_id, message.content()))
-      [[likely]] {
+    if(default_deserialize_message_type(sub_msg_id, message.content())) [[likely]] {
         log_debug("endpoint ${source} unsubscribes from ${message}")
           .arg("source", message.source_id)
           .arg("message", sub_msg_id);
@@ -1430,8 +1406,8 @@ auto router::_handle_password_request(const message_view& message) noexcept
     return was_handled;
 }
 //------------------------------------------------------------------------------
-auto router::_handle_router_certificate_query(
-  const message_view& message) noexcept -> message_handling_result {
+auto router::_handle_router_certificate_query(const message_view& message) noexcept
+  -> message_handling_result {
     const std::unique_lock lk{_router_lock};
     _blobs.push_outgoing(
       msgbus_id{"rtrCertPem"},
@@ -1444,8 +1420,8 @@ auto router::_handle_router_certificate_query(
     return was_handled;
 }
 //------------------------------------------------------------------------------
-auto router::_handle_endpoint_certificate_query(
-  const message_view& message) noexcept -> message_handling_result {
+auto router::_handle_endpoint_certificate_query(const message_view& message) noexcept
+  -> message_handling_result {
     const std::unique_lock lk{_router_lock};
     if(const auto cert_pem{
          _context.get_remote_certificate_pem(message.target_id)}) {
@@ -1470,18 +1446,17 @@ auto router::_handle_topology_query(const message_view& message) noexcept
       .router_id = own_id, .instance_id = _ids.instance_id()};
 
     auto temp{default_serialize_buffer_for(info)};
-    const auto respond{
-      [&](endpoint_id_t remote_id, const connection_kind conn_kind) {
-          info.remote_id = remote_id;
-          info.connect_kind = conn_kind;
-          if(const auto serialized{default_serialize(info, cover(temp))})
-            [[likely]] {
-              message_view response{*serialized};
-              response.setup_response(message);
-              response.set_source_id(own_id);
-              this->_route_message(msgbus_id{"topoRutrCn"}, own_id, response);
-          }
-      }};
+    const auto respond{[&](
+                         endpoint_id_t remote_id, const connection_kind conn_kind) {
+        info.remote_id = remote_id;
+        info.connect_kind = conn_kind;
+        if(const auto serialized{default_serialize(info, cover(temp))}) [[likely]] {
+            message_view response{*serialized};
+            response.setup_response(message);
+            response.set_source_id(own_id);
+            this->_route_message(msgbus_id{"topoRutrCn"}, own_id, response);
+        }
+    }};
 
     for(auto& [nd_id, nd] : _nodes.get()) {
         respond(nd_id, nd.kind_of_connection());
@@ -1507,23 +1482,21 @@ auto router::_handle_stats_query(const message_view& message) noexcept
     const auto own_id{get_id()};
     const auto stats{_stats.statistics()};
     auto rs_buf{default_serialize_buffer_for(stats)};
-    if(const auto serialized{default_serialize(stats, cover(rs_buf))})
-      [[likely]] {
+    if(const auto serialized{default_serialize(stats, cover(rs_buf))}) [[likely]] {
         message_view response{*serialized};
         response.setup_response(message);
         response.set_source_id(own_id);
         this->_route_message(msgbus_id{"statsRutr"}, own_id, response);
     }
 
-    const auto respond{[&, this](
-                         const endpoint_id_t remote_id, const auto& node) {
+    const auto respond{[&, this](const endpoint_id_t remote_id, const auto& node) {
         connection_statistics conn_stats{};
         conn_stats.local_id = own_id;
         conn_stats.remote_id = remote_id;
         if(node.query_statistics(conn_stats)) {
             auto cs_buf{default_serialize_buffer_for(conn_stats)};
-            if(const auto serialized{
-                 default_serialize(conn_stats, cover(cs_buf))}) [[likely]] {
+            if(const auto serialized{default_serialize(conn_stats, cover(cs_buf))})
+              [[likely]] {
                 message_view response{*serialized};
                 response.setup_response(message);
                 response.set_source_id(own_id);
@@ -1561,8 +1534,7 @@ auto router::_handle_blob_fragment(const message_view& message) noexcept
   -> message_handling_result {
 
     const std::unique_lock lk{_router_lock};
-    _blobs.handle_fragment(
-      message, make_callable_ref<&router::_handle_blob>(this));
+    _blobs.handle_fragment(message, make_callable_ref<&router::_handle_blob>(this));
     return has_id(message.target_id) ? was_handled : should_be_forwarded;
 }
 //------------------------------------------------------------------------------
@@ -1884,8 +1856,7 @@ auto router::_handle_special_parent_message(
     return true;
 }
 //------------------------------------------------------------------------------
-void router::_route_messages_by_workers(
-  some_true_atomic& something_done) noexcept {
+void router::_route_messages_by_workers(some_true_atomic& something_done) noexcept {
     const auto message_age_inc{_stats.time_since_last_routing()};
     std::latch completed{limit_cast<std::ptrdiff_t>(node_count())};
 

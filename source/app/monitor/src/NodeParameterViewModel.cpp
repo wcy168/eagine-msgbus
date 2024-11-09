@@ -41,8 +41,7 @@ auto NodeParameterViewModel::getPingSuccessRate() -> QAbstractItemModel* {
 //------------------------------------------------------------------------------
 auto NodeParameterViewModel::roleNames() const -> QHash<int, QByteArray> {
     QHash<int, QByteArray> result;
-    result.insert(
-      NodeParameterViewModel::pingSuccessRateRole, "pingSuccessRate");
+    result.insert(NodeParameterViewModel::pingSuccessRateRole, "pingSuccessRate");
     return result;
 }
 //------------------------------------------------------------------------------

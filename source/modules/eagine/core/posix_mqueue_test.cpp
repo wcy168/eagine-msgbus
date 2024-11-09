@@ -91,11 +91,10 @@ void posix_mqueue_roundtrip(auto& s) {
 
         eagine::msgbus::message_sequence_t seq{0};
 
-        const auto read_func =
-          [&](
-            const eagine::message_id msg_id,
-            const eagine::msgbus::message_age,
-            const eagine::msgbus::message_view& msg) -> bool {
+        const auto read_func = [&](
+                                 const eagine::message_id msg_id,
+                                 const eagine::msgbus::message_age,
+                                 const eagine::msgbus::message_view& msg) -> bool {
             test.check(msg_id == test_msg_id, "message id");
             std::size_t h{0};
             for(const auto b : msg.content()) {
@@ -108,8 +107,7 @@ void posix_mqueue_roundtrip(auto& s) {
         };
 
         for(unsigned r = 0; r < test.repeats(100); ++r) {
-            for(unsigned i = 0, n = rg.get_between<unsigned>(0, 20); i < n;
-                ++i) {
+            for(unsigned i = 0, n = rg.get_between<unsigned>(0, 20); i < n; ++i) {
                 cacc->update();
                 read_conn->update();
                 write_conn->update();

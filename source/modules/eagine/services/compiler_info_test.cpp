@@ -20,10 +20,12 @@ void compiler_info_1(auto& s) {
     auto& ctx{s.context()};
     eagine::msgbus::registry the_reg{ctx};
 
-    auto& provider = the_reg.emplace<eagine::msgbus::service_composition<
-      eagine::msgbus::compiler_info_provider<>>>("Provider");
-    auto& consumer = the_reg.emplace<eagine::msgbus::service_composition<
-      eagine::msgbus::compiler_info_consumer<>>>("Consumer");
+    auto& provider = the_reg.emplace<
+      eagine::msgbus::service_composition<eagine::msgbus::compiler_info_provider<>>>(
+      "Provider");
+    auto& consumer = the_reg.emplace<
+      eagine::msgbus::service_composition<eagine::msgbus::compiler_info_consumer<>>>(
+      "Consumer");
 
     if(the_reg.wait_for_id_of(std::chrono::seconds{30}, provider, consumer)) {
         bool has_compiler_info{false};
@@ -32,15 +34,14 @@ void compiler_info_1(auto& s) {
             return has_compiler_info;
         }};
 
-        const auto handle_compiler_info{
-          [&](
-            const eagine::msgbus::result_context& rc,
-            const eagine::compiler_info& info) {
-              has_compiler_info =
-                info.name().has_value() or info.architecture_name().has_value();
-              test.check(provider.get_id() == rc.source_id(), "from provider");
-              trck.checkpoint(1);
-          }};
+        const auto handle_compiler_info{[&](
+                                          const eagine::msgbus::result_context& rc,
+                                          const eagine::compiler_info& info) {
+            has_compiler_info =
+              info.name().has_value() or info.architecture_name().has_value();
+            test.check(provider.get_id() == rc.source_id(), "from provider");
+            trck.checkpoint(1);
+        }};
 
         consumer.compiler_info_received.connect(
           {eagine::construct_from, handle_compiler_info});

@@ -22,8 +22,7 @@ struct fibonacci_server : static_subscriber<2> {
           ep,
           this,
           message_map<"Fibonacci", "FindServer", &fibonacci_server::is_ready>{},
-          message_map<"Fibonacci", "Calculate", &fibonacci_server::calculate>{}) {
-    }
+          message_map<"Fibonacci", "Calculate", &fibonacci_server::calculate>{}) {}
 
     auto is_ready(const message_context&, const stored_message& msg_in) noexcept
       -> bool {
@@ -94,8 +93,7 @@ struct fibonacci_client : static_subscriber<2> {
             if(serialize(arg, write_backend)) {
                 message_view msg_out{sink.done()};
                 msg_out.set_serializer_id(write_backend.type_id());
-                bus_node().respond_to(
-                  msg_in, {"Fibonacci", "Calculate"}, msg_out);
+                bus_node().respond_to(msg_in, {"Fibonacci", "Calculate"}, msg_out);
             }
         }
         return true;
@@ -170,4 +168,3 @@ auto main(main_ctx& ctx) -> int {
 auto main(int argc, const char** argv) -> int {
     return eagine::default_main(argc, argv, eagine::main);
 }
-

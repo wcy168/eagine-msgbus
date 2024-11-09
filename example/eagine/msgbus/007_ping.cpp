@@ -19,10 +19,8 @@ struct ping_stats {
     std::chrono::microseconds min_time{std::chrono::microseconds::max()};
     std::chrono::microseconds max_time{std::chrono::microseconds::zero()};
     std::chrono::microseconds sum_time{std::chrono::microseconds::zero()};
-    std::chrono::steady_clock::time_point start{
-      std::chrono::steady_clock::now()};
-    std::chrono::steady_clock::time_point finish{
-      std::chrono::steady_clock::now()};
+    std::chrono::steady_clock::time_point start{std::chrono::steady_clock::now()};
+    std::chrono::steady_clock::time_point finish{std::chrono::steady_clock::now()};
     std::intmax_t responded{0};
     std::intmax_t timeouted{0};
     resetting_timeout should_check_info{std::chrono::seconds(5), nothing};
@@ -107,8 +105,7 @@ public:
       const result_context&,
       const subscriber_subscribed& sub) noexcept {
         if(sub.message_type == this->ping_msg_id()) {
-            if(_targets.try_emplace(sub.source.endpoint_id, ping_stats{})
-                 .second) {
+            if(_targets.try_emplace(sub.source.endpoint_id, ping_stats{}).second) {
                 log_info("new pingable ${id} appeared")
                   .tag("newPngable")
                   .arg("id", sub.source.endpoint_id);
@@ -120,8 +117,7 @@ public:
       const result_context&,
       const subscriber_unsubscribed& sub) noexcept {
         if(sub.message_type == this->ping_msg_id()) {
-            log_info("pingable ${id} disappeared")
-              .arg("id", sub.source.endpoint_id);
+            log_info("pingable ${id} disappeared").arg("id", sub.source.endpoint_id);
         }
     }
 
@@ -188,18 +184,16 @@ public:
     }
 
     auto is_done() const noexcept -> bool {
-        return not(
-          ((_rcvd + _tout + _mod) < _max) or this->has_pending_pings());
+        return not(((_rcvd + _tout + _mod) < _max) or this->has_pending_pings());
     }
 
     auto do_update() -> work_done {
         some_true something_done{};
         if(not _targets.empty()) {
             const auto lim{
-              _rcvd +
-              static_cast<std::intmax_t>(
-                static_cast<float>(_mod) *
-                (1.F + std::log(static_cast<float>(1 + _targets.size()))))};
+              _rcvd + static_cast<std::intmax_t>(
+                        static_cast<float>(_mod) *
+                        (1.F + std::log(static_cast<float>(1 + _targets.size()))))};
             for(auto& [pingable_id, entry] : _targets) {
                 if((_rcvd < _max) and (_sent < lim)) {
                     this->ping(
@@ -269,10 +263,7 @@ public:
               .arg("duration", info.time_interval())
               .arg("rspdRate", "Ratio", info.respond_rate(), not_avail)
               .arg(
-                "rspdPerSec",
-                "RatePerSec",
-                info.responds_per_second(),
-                not_avail);
+                "rspdPerSec", "RatePerSec", info.responds_per_second(), not_avail);
         }
     }
 

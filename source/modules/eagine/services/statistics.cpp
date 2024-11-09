@@ -104,15 +104,13 @@ public:
 
     auto decode_router_statistics(
       const message_context& msg_ctx,
-      const stored_message& message) noexcept
-      -> std::optional<router_statistics> {
+      const stored_message& message) noexcept -> std::optional<router_statistics> {
         return _impl->decode_router_statistics(msg_ctx, message);
     }
 
     auto decode_bridge_statistics(
       const message_context& msg_ctx,
-      const stored_message& message) noexcept
-      -> std::optional<bridge_statistics> {
+      const stored_message& message) noexcept -> std::optional<bridge_statistics> {
         return _impl->decode_bridge_statistics(msg_ctx, message);
     }
 
@@ -156,4 +154,3 @@ private:
 };
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus
-

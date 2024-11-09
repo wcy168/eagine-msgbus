@@ -27,9 +27,7 @@ public:
     }
 
     template <unsigned S>
-    void print(
-      const result_context&,
-      const solved_sudoku_board<S>& sol) noexcept {
+    void print(const result_context&, const solved_sudoku_board<S>& sol) noexcept {
         std::cout << "board: " << std::get<int>(sol.key) << '\n';
         default_sudoku_board_traits<S>().print(std::cout, sol.board);
         std::cout << std::endl;
@@ -41,8 +39,7 @@ private:
 } // namespace msgbus
 
 auto main(main_ctx& ctx) -> int {
-    const auto worker_count =
-      ctx.system().cpu_concurrent_threads().value_or(4) + 1;
+    const auto worker_count = ctx.system().cpu_concurrent_threads().value_or(4) + 1;
 
     auto acceptor = msgbus::make_direct_acceptor(ctx);
 
@@ -82,8 +79,7 @@ auto main(main_ctx& ctx) -> int {
                               &start,
                               &done,
                               helper_obj{main_ctx_object{"Helper", ctx}},
-                              connection{
-                                acceptor->make_connection()}]() mutable {
+                              connection{acceptor->make_connection()}]() mutable {
             worker_mutex.lock();
             msgbus::endpoint helper_endpoint{std::move(helper_obj)};
             helper_endpoint.add_connection(std::move(connection));
@@ -128,4 +124,3 @@ auto main(main_ctx& ctx) -> int {
 auto main(int argc, const char** argv) -> int {
     return eagine::default_main(argc, argv, eagine::main);
 }
-

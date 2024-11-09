@@ -87,8 +87,7 @@ auto subscriber_discovery_impl::_handle_subscribed(
         signals.subscribed(
           result_context{msg_ctx, message},
           subscriber_subscribed{
-            .source = get_subscriber_info(message),
-            .message_type = sub_msg_id});
+            .source = get_subscriber_info(message), .message_type = sub_msg_id});
     }
     return true;
 }
@@ -101,8 +100,7 @@ auto subscriber_discovery_impl::_handle_unsubscribed(
         signals.unsubscribed(
           result_context{msg_ctx, message},
           subscriber_unsubscribed{
-            .source = get_subscriber_info(message),
-            .message_type = sub_msg_id});
+            .source = get_subscriber_info(message), .message_type = sub_msg_id});
     }
     return true;
 }
@@ -115,16 +113,14 @@ auto subscriber_discovery_impl::_handle_not_subscribed(
         signals.not_subscribed(
           result_context{msg_ctx, message},
           subscriber_not_subscribed{
-            .source = get_subscriber_info(message),
-            .message_type = sub_msg_id});
+            .source = get_subscriber_info(message), .message_type = sub_msg_id});
     }
     return true;
 }
 //------------------------------------------------------------------------------
 void subscriber_discovery_impl::add_methods() noexcept {
     base.add_method(
-      this,
-      msgbus_map<"stillAlive", &subscriber_discovery_impl::_handle_alive>{});
+      this, msgbus_map<"stillAlive", &subscriber_discovery_impl::_handle_alive>{});
     base.add_method(
       this,
       msgbus_map<"subscribTo", &subscriber_discovery_impl::_handle_subscribed>{});
@@ -133,9 +129,7 @@ void subscriber_discovery_impl::add_methods() noexcept {
       msgbus_map<"unsubFrom", &subscriber_discovery_impl::_handle_unsubscribed>{});
     base.add_method(
       this,
-      msgbus_map<
-        "notSubTo",
-        &subscriber_discovery_impl::_handle_not_subscribed>{});
+      msgbus_map<"notSubTo", &subscriber_discovery_impl::_handle_not_subscribed>{});
 }
 //------------------------------------------------------------------------------
 auto subscriber_discovery_impl::get_subscriber_info(
@@ -158,14 +152,12 @@ auto subscriber_discovery_impl::decode_subscriber_alive(
 //------------------------------------------------------------------------------
 auto subscriber_discovery_impl::decode_subscriber_subscribed(
   const message_context& msg_ctx,
-  const stored_message& message) noexcept
-  -> std::optional<subscriber_subscribed> {
+  const stored_message& message) noexcept -> std::optional<subscriber_subscribed> {
     if(msg_ctx.is_special_message("subscribTo")) {
         message_id sub_msg_id{};
         if(default_deserialize_message_type(sub_msg_id, message.content())) {
             return {subscriber_subscribed{
-              .source = get_subscriber_info(message),
-              .message_type = sub_msg_id}};
+              .source = get_subscriber_info(message), .message_type = sub_msg_id}};
         }
     }
     return {};
@@ -179,8 +171,7 @@ auto subscriber_discovery_impl::decode_subscriber_unsubscribed(
         message_id sub_msg_id{};
         if(default_deserialize_message_type(sub_msg_id, message.content())) {
             return {subscriber_unsubscribed{
-              .source = get_subscriber_info(message),
-              .message_type = sub_msg_id}};
+              .source = get_subscriber_info(message), .message_type = sub_msg_id}};
         }
     }
     return {};
@@ -194,8 +185,7 @@ auto subscriber_discovery_impl::decode_subscriber_not_subscribed(
         message_id sub_msg_id{};
         if(default_deserialize_message_type(sub_msg_id, message.content())) {
             return {subscriber_not_subscribed{
-              .source = get_subscriber_info(message),
-              .message_type = sub_msg_id}};
+              .source = get_subscriber_info(message), .message_type = sub_msg_id}};
         }
     }
     return {};
@@ -203,8 +193,7 @@ auto subscriber_discovery_impl::decode_subscriber_not_subscribed(
 //------------------------------------------------------------------------------
 auto make_subscriber_discovery_impl(
   subscriber& base,
-  subscriber_discovery_signals& sigs)
-  -> unique_holder<subscriber_discovery_intf> {
+  subscriber_discovery_signals& sigs) -> unique_holder<subscriber_discovery_intf> {
     return {hold<subscriber_discovery_impl>, base, sigs};
 }
 //------------------------------------------------------------------------------

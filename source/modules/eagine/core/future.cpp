@@ -100,8 +100,7 @@ public:
     /// @brief Sets the on-success handler.
     /// @see then
     /// @see on_timeout
-    auto on_success(const std::function<void(T)>& handler) noexcept
-      -> future<T>& {
+    auto on_success(const std::function<void(T)>& handler) noexcept -> future<T>& {
         if(_state) {
             _state->success_handler = handler;
         }
@@ -110,8 +109,7 @@ public:
 
     /// @brief Sets the on-timeout handler.
     /// @see on_success
-    auto on_timeout(const std::function<void()>& handler) noexcept
-      -> future<T>& {
+    auto on_timeout(const std::function<void()>& handler) noexcept -> future<T>& {
         if(_state) {
             _state->timeout_handler = handler;
         }
@@ -125,10 +123,9 @@ public:
     auto then(Handler handler) noexcept
       -> future<T>& requires(std::is_invocable_v<Handler, T>) {
           if(_state) {
-              _state->success_handler = std::function<void(T)>(
-                [state{_state}, handler{std::move(handler)}](T value) {
-                    handler(value);
-                });
+              _state->success_handler =
+                std::function<void(T)>([state{_state}, handler{std::move(handler)}](
+                                         T value) { handler(value); });
           }
           return *this;
       }
@@ -153,8 +150,7 @@ public:
     }
 
 private:
-    std::shared_ptr<future_state<T>> _state{
-      std::make_shared<future_state<T>>()};
+    std::shared_ptr<future_state<T>> _state{std::make_shared<future_state<T>>()};
 };
 //------------------------------------------------------------------------------
 /// @brief Class that makes new and tracks existing pending message bus promises.

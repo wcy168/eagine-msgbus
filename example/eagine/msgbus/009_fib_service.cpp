@@ -22,8 +22,7 @@ struct fibonacci_server : static_subscriber<2> {
           ep,
           this,
           message_map<"Fibonacci", "FindServer", &fibonacci_server::is_ready>{},
-          message_map<"Fibonacci", "Calculate", &fibonacci_server::calculate>{}) {
-    }
+          message_map<"Fibonacci", "Calculate", &fibonacci_server::calculate>{}) {}
 
     auto is_ready(const message_context&, const stored_message& msg_in) noexcept
       -> bool {
@@ -91,9 +90,8 @@ struct fibonacci_client : static_subscriber<2> {
         return true;
     }
 
-    auto fulfill(
-      const message_context& ctx,
-      const stored_message& message) noexcept -> bool {
+    auto fulfill(const message_context& ctx, const stored_message& message) noexcept
+      -> bool {
         _calc_invoker.fulfill_by(ctx, message);
         return true;
     }
@@ -154,4 +152,3 @@ auto main(main_ctx& ctx) -> int {
 auto main(int argc, const char** argv) -> int {
     return eagine::default_main(argc, argv, eagine::main);
 }
-

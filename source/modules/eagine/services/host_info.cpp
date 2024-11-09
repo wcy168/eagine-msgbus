@@ -45,8 +45,7 @@ protected:
     }
 
 private:
-    default_function_skeleton<valid_if_positive<host_id_t>() noexcept, 64>
-      _host_id;
+    default_function_skeleton<valid_if_positive<host_id_t>() noexcept, 64> _host_id;
 
     default_function_skeleton<valid_if_not_empty<std::string>() noexcept, 1024>
       _hostname;
@@ -55,15 +54,13 @@ private:
 export struct host_info_consumer_signals {
     /// @brief Triggered on receipt of endpoint's host identifier.
     /// @see query_host_id
-    signal<
-      void(const result_context&, const valid_if_positive<host_id_t>&) noexcept>
+    signal<void(const result_context&, const valid_if_positive<host_id_t>&) noexcept>
       host_id_received;
 
     /// @brief Triggered on receipt of endpoint's host name.
     /// @see query_hostname
-    signal<void(
-      const result_context&,
-      const valid_if_not_empty<std::string>&) noexcept>
+    signal<
+      void(const result_context&, const valid_if_not_empty<std::string>&) noexcept>
       hostname_received;
 };
 //------------------------------------------------------------------------------
@@ -90,9 +87,7 @@ public:
     /// @see query_host_id
     void query_hostname(const endpoint_id_t endpoint_id) noexcept {
         _hostname.invoke_on(
-          this->bus_node(),
-          endpoint_id,
-          message_id{"eagiSysInf", "rqHostname"});
+          this->bus_node(), endpoint_id, message_id{"eagiSysInf", "rqHostname"});
     }
 
 protected:
@@ -101,20 +96,18 @@ protected:
     void add_methods() noexcept {
         Base::add_methods();
 
-        Base::add_method(_host_id(this->host_id_received)
-                           .map_fulfill_by({"eagiSysInf", "hostId"}));
+        Base::add_method(
+          _host_id(this->host_id_received).map_fulfill_by({"eagiSysInf", "hostId"}));
 
         Base::add_method(_hostname(this->hostname_received)
                            .map_fulfill_by({"eagiSysInf", "hostname"}));
     }
 
 private:
-    default_callback_invoker<valid_if_positive<host_id_t>() noexcept, 32>
-      _host_id;
+    default_callback_invoker<valid_if_positive<host_id_t>() noexcept, 32> _host_id;
 
     default_callback_invoker<valid_if_not_empty<std::string>() noexcept, 1024>
       _hostname;
 };
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus
-

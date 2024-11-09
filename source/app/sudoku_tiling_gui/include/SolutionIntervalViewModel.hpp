@@ -21,10 +21,8 @@ class SolutionIntervalViewModel final
 
     Q_PROPERTY(QVariantList intervals READ getIntervals NOTIFY dataChanged)
     Q_PROPERTY(qreal maxInterval READ getMaxInterval NOTIFY dataChanged)
-    Q_PROPERTY(
-      QVariantList fixedIntervals READ getFixedIntervals NOTIFY dataChanged)
-    Q_PROPERTY(
-      qreal maxFixedInterval READ getMaxFixedInterval NOTIFY dataChanged)
+    Q_PROPERTY(QVariantList fixedIntervals READ getFixedIntervals NOTIFY dataChanged)
+    Q_PROPERTY(qreal maxFixedInterval READ getMaxFixedInterval NOTIFY dataChanged)
 public:
     SolutionIntervalViewModel(TilingBackend&);
     ~SolutionIntervalViewModel() final;

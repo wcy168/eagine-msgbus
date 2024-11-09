@@ -20,10 +20,12 @@ void system_info_1(auto& s) {
     auto& ctx{s.context()};
     eagine::msgbus::registry the_reg{ctx};
 
-    auto& provider = the_reg.emplace<eagine::msgbus::service_composition<
-      eagine::msgbus::system_info_provider<>>>("Provider");
-    auto& consumer = the_reg.emplace<eagine::msgbus::service_composition<
-      eagine::msgbus::system_info_consumer<>>>("Consumer");
+    auto& provider = the_reg.emplace<
+      eagine::msgbus::service_composition<eagine::msgbus::system_info_provider<>>>(
+      "Provider");
+    auto& consumer = the_reg.emplace<
+      eagine::msgbus::service_composition<eagine::msgbus::system_info_consumer<>>>(
+      "Consumer");
 
     if(the_reg.wait_for_id_of(std::chrono::seconds{30}, provider, consumer)) {
 
@@ -53,8 +55,7 @@ void system_info_1(auto& s) {
             test.check(provider.get_id() == rc.source_id(), "from provider");
             trck.checkpoint(1);
         }};
-        consumer.uptime_received.connect(
-          {eagine::construct_from, handle_uptime});
+        consumer.uptime_received.connect({eagine::construct_from, handle_uptime});
 
         // cpu concurrent threads
         const auto handle_cpu_concurrent_threads{
@@ -165,8 +166,7 @@ void system_info_1(auto& s) {
                       provider.get_id().value());
                 }
                 if(not has_short_average_load) {
-                    consumer.query_short_average_load(
-                      provider.get_id().value());
+                    consumer.query_short_average_load(provider.get_id().value());
                 }
                 if(not has_long_average_load) {
                     consumer.query_long_average_load(provider.get_id().value());

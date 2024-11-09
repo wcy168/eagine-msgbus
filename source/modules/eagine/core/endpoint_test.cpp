@@ -176,8 +176,8 @@ void endpoint_preconfigure_id(unsigned r, auto& s) {
 
     eagine::timeout get_id_time{std::chrono::seconds{5}};
 
-    while(not(
-      endpoint_a.has_id() and endpoint_b.has_id() and endpoint_c.has_id())) {
+    while(
+      not(endpoint_a.has_id() and endpoint_b.has_id() and endpoint_c.has_id())) {
         if(r % 2 == 0) {
             router.update();
             endpoint_a.update();
@@ -220,8 +220,8 @@ void endpoint_get_id(unsigned r, auto& s) {
 
     eagine::timeout get_id_time{std::chrono::seconds{5}};
 
-    while(not(
-      endpoint_a.has_id() and endpoint_b.has_id() and endpoint_c.has_id())) {
+    while(
+      not(endpoint_a.has_id() and endpoint_b.has_id() and endpoint_c.has_id())) {
         if(r % 2 == 0) {
             router.update();
             endpoint_a.update();

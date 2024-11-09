@@ -116,11 +116,9 @@ void topology_1(auto& s) {
       {eagine::construct_from, handle_router_appeared});
 
     auto& pinger =
-      the_reg.emplace<eagine::msgbus::service_composition<test_ping<>>>(
-        "TestPing");
+      the_reg.emplace<eagine::msgbus::service_composition<test_ping<>>>("TestPing");
     auto& ponger =
-      the_reg.emplace<eagine::msgbus::service_composition<test_pong<>>>(
-        "TestPong");
+      the_reg.emplace<eagine::msgbus::service_composition<test_pong<>>>("TestPong");
 
     const auto handle_endpoint_appeared{
       [&](

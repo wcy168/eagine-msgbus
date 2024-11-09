@@ -71,62 +71,53 @@ struct system_info_consumer_intf : interface<system_info_consumer_intf> {
 export struct system_info_consumer_signals {
     /// @brief Triggered on receipt of endpoint's system uptime.
     /// @see query_uptime
-    signal<
-      void(const result_context&, const std::chrono::duration<float>&) noexcept>
+    signal<void(const result_context&, const std::chrono::duration<float>&) noexcept>
       uptime_received;
 
     /// @brief Triggered on receipt of CPU's supported concurrent thread count.
     /// @see query_cpu_concurrent_threads
-    signal<void(
-      const result_context&,
-      const valid_if_positive<span_size_t>&) noexcept>
+    signal<
+      void(const result_context&, const valid_if_positive<span_size_t>&) noexcept>
       cpu_concurrent_threads_received;
 
     /// @brief Triggered on receipt of endpoint's host short average load.
     /// @see query_short_average_load
-    signal<
-      void(const result_context&, const valid_if_nonnegative<float>&) noexcept>
+    signal<void(const result_context&, const valid_if_nonnegative<float>&) noexcept>
       short_average_load_received;
 
     /// @brief Triggered on receipt of endpoint's host long average load.
     /// @see query_long_average_load
-    signal<
-      void(const result_context&, const valid_if_nonnegative<float>&) noexcept>
+    signal<void(const result_context&, const valid_if_nonnegative<float>&) noexcept>
       long_average_load_received;
 
     /// @brief Triggered on receipt of endpoint's host system memory page size.
     /// @see query_memory_page_size
-    signal<void(
-      const result_context&,
-      const valid_if_positive<span_size_t>&) noexcept>
+    signal<
+      void(const result_context&, const valid_if_positive<span_size_t>&) noexcept>
       memory_page_size_received;
 
     /// @brief Triggered on receipt of endpoint's host system free RAM size.
     /// @see query_free_ram_size
-    signal<void(
-      const result_context&,
-      const valid_if_positive<span_size_t>&) noexcept>
+    signal<
+      void(const result_context&, const valid_if_positive<span_size_t>&) noexcept>
       free_ram_size_received;
 
     /// @brief Triggered on receipt of endpoint's host system total RAM size.
     /// @see query_total_ram_size
-    signal<void(
-      const result_context&,
-      const valid_if_positive<span_size_t>&) noexcept>
+    signal<
+      void(const result_context&, const valid_if_positive<span_size_t>&) noexcept>
       total_ram_size_received;
 
     /// @brief Triggered on receipt of endpoint's host system free swap size.
     /// @see query_free_swap_size
-    signal<void(
-      const result_context&,
-      const valid_if_nonnegative<span_size_t>&) noexcept>
+    signal<
+      void(const result_context&, const valid_if_nonnegative<span_size_t>&) noexcept>
       free_swap_size_received;
 
     /// @brief Triggered on receipt of endpoint's host system total swap size.
     /// @see query_total_swap_size
-    signal<void(
-      const result_context&,
-      const valid_if_nonnegative<span_size_t>&) noexcept>
+    signal<
+      void(const result_context&, const valid_if_nonnegative<span_size_t>&) noexcept>
       total_swap_size_received;
 
     /// @brief Triggered on receipt of endpoint's host system min/max temperatures.
@@ -259,4 +250,3 @@ private:
 };
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus
-

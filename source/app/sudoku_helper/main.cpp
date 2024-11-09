@@ -33,9 +33,7 @@ public:
     }
 
 private:
-    void on_shutdown(
-      const result_context&,
-      const shutdown_request& req) noexcept;
+    void on_shutdown(const result_context&, const shutdown_request& req) noexcept;
 
     bool _do_shutdown{false};
 };
@@ -78,8 +76,7 @@ private:
     void _helper_main() noexcept;
 
     signal_switch _interrupted;
-    signal_binding _sig_bind{
-      main_context().log().log_when_switched(_interrupted)};
+    signal_binding _sig_bind{main_context().log().log_when_switched(_interrupted)};
     msgbus::registry _registry{*this};
     application_config_value<bool> _shutdown_when_idle{
       *this,

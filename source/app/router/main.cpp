@@ -56,12 +56,10 @@ public:
 private:
     timeout _shutdown_timeout{
       cfg_init("msgbus.router.shutdown.delay", std::chrono::seconds(60))};
-    const std::chrono::milliseconds _shutdown_max_age{cfg_init(
-      "msgbus.router.shutdown.max_age",
-      std::chrono::milliseconds(2500))};
+    const std::chrono::milliseconds _shutdown_max_age{
+      cfg_init("msgbus.router.shutdown.max_age", std::chrono::milliseconds(2500))};
     const bool _shutdown_ignore{cfg_init("msgbus.router.keep_running", false)};
-    const bool _shutdown_verify{
-      cfg_init("msgbus.router.shutdown.verify", true)};
+    const bool _shutdown_verify{cfg_init("msgbus.router.shutdown.verify", true)};
     bool _do_shutdown{false};
 
     auto _shutdown_verified(const verification_bits v) const noexcept -> bool;
@@ -89,8 +87,7 @@ router_node::router_node(endpoint& bus)
     }
     auto& info = provided_endpoint_info();
     info.display_name = "router control node";
-    info.description =
-      "endpoint monitoring and controlling a message bus router";
+    info.description = "endpoint monitoring and controlling a message bus router";
     info.is_router_node = true;
 }
 //------------------------------------------------------------------------------
@@ -222,9 +219,7 @@ auto router_run_stats::log_stats(const logger& log) noexcept {
       .arg("workRate", "Ratio", work_rate());
 }
 //------------------------------------------------------------------------------
-auto router_run_stats::update(
-  const logger& log,
-  work_done something_done) noexcept {
+auto router_run_stats::update(const logger& log, work_done something_done) noexcept {
     if(something_done) {
         ++cycles_work;
     } else {

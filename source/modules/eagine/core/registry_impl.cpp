@@ -46,8 +46,7 @@ registry::registry(main_ctx_parent parent) noexcept
       [this](auto& setup) { setup.setup_connectors(_router); });
 }
 //------------------------------------------------------------------------------
-auto registry::_add_entry(const identifier log_id) noexcept
-  -> registered_entry& {
+auto registry::_add_entry(const identifier log_id) noexcept -> registered_entry& {
     unique_holder<endpoint> new_ept{
       default_selector, main_ctx_object{log_id, *this}};
     new_ept->add_connection(_acceptor->make_connection());
@@ -100,8 +99,7 @@ auto registry::update_and_process() noexcept -> work_done {
     return something_done;
 }
 //------------------------------------------------------------------------------
-auto registry::wait_for_ids(const std::chrono::milliseconds t) noexcept
-  -> bool {
+auto registry::wait_for_ids(const std::chrono::milliseconds t) noexcept -> bool {
     timeout get_id_time{t};
     const auto missing_ids{[this]() {
         for(const auto& entry : _entries) {

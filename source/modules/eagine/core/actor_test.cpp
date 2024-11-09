@@ -128,9 +128,8 @@ void actor_ping_pong(auto& s) {
 
     auto fact{eagine::msgbus::make_direct_connection_factory(s.context())};
     test.ensure(bool(fact), "has factory");
-    auto cacc{
-      fact->make_acceptor(eagine::identifier{"test"})
-        .as(std::type_identity<eagine::msgbus::direct_acceptor_intf>{})};
+    auto cacc{fact->make_acceptor(eagine::identifier{"test"})
+                .as(std::type_identity<eagine::msgbus::direct_acceptor_intf>{})};
     test.ensure(bool(cacc), "has acceptor");
 
     auto ping_conn{cacc->make_connection()};

@@ -42,8 +42,7 @@ public:
     auto getTilingTheme() noexcept -> TilingTheme*;
     auto getTilingViewModel() noexcept -> TilingViewModel*;
     auto getSolutionProgressViewModel() noexcept -> SolutionProgressViewModel*;
-    auto getHelperContributionViewModel() noexcept
-      -> HelperContributionViewModel*;
+    auto getHelperContributionViewModel() noexcept -> HelperContributionViewModel*;
     auto getSolutionIntervalViewModel() noexcept -> SolutionIntervalViewModel*;
 signals:
     void tilingModelChanged();

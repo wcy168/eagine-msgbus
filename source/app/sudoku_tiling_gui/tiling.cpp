@@ -31,8 +31,7 @@ auto main(main_ctx& ctx) -> int {
 
     const auto registerId = "com.github.matus_chochlik.eagine.msgbus.tiling";
 
-    qmlRegisterUncreatableType<TilingTheme>(
-      registerId, 1, 0, "TilingTheme", {});
+    qmlRegisterUncreatableType<TilingTheme>(registerId, 1, 0, "TilingTheme", {});
     qmlRegisterUncreatableType<TilingViewModel>(
       registerId, 1, 0, "TilingViewModel", {});
     qmlRegisterType<PaintedImage>(registerId, 1, 0, "PaintedImage");

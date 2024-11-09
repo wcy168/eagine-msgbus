@@ -55,8 +55,7 @@ void TilingViewModel::doSaveAs(const QUrl& filePath) {
         QFile tilingFile(QDir::toNativeSeparators(filePath.toLocalFile()));
         if(tilingFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
             auto& tilingModel = extract(optTilingModel);
-            for(const auto row :
-                eagine::integer_range(tilingModel.getHeight())) {
+            for(const auto row : eagine::integer_range(tilingModel.getHeight())) {
                 for(const auto column :
                     eagine::integer_range(tilingModel.getWidth())) {
                     tilingFile.putChar(tilingModel.getCellChar(row, column));
@@ -95,8 +94,7 @@ auto TilingViewModel::columnCount(const QModelIndex&) const -> int {
     return 0;
 }
 //------------------------------------------------------------------------------
-auto TilingViewModel::data(const QModelIndex& index, int role) const
-  -> QVariant {
+auto TilingViewModel::data(const QModelIndex& index, int role) const -> QVariant {
     if(role == Qt::DisplayRole) {
         if(auto tilingModel{_backend.getTilingModel()}) {
             return extract(tilingModel).getCell(index.row(), index.column());

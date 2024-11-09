@@ -71,8 +71,7 @@ private:
     auto _do_send(const memory::const_block content) noexcept -> bool;
 
     static void _message_delivered_f(void*, MQTTClient_deliveryToken);
-    static auto _message_arrived_f(void*, char*, int, MQTTClient_message*)
-      -> int;
+    static auto _message_arrived_f(void*, char*, int, MQTTClient_message*) -> int;
     static void _connection_lost_f(void*, char*);
 
     void _message_delivered() noexcept;
@@ -120,8 +119,7 @@ auto mqtt_bridge_state::_get_client_uid(const url& locator) const noexcept
     return main_context().random_identifier(10Z);
 }
 //------------------------------------------------------------------------------
-auto mqtt_bridge_state::_topic_ok(std::string_view topic) const noexcept
-  -> bool {
+auto mqtt_bridge_state::_topic_ok(std::string_view topic) const noexcept -> bool {
     assert(topic.starts_with(_prefix));
     return not topic.ends_with(_client_uid);
 }
@@ -247,9 +245,7 @@ mqtt_bridge_state::mqtt_bridge_state(
     }
     _connected = true;
 
-    if(
-      MQTTClient_subscribe(_mqtt_client, _pattern.c_str(), 1) !=
-      MQTTCLIENT_SUCCESS) {
+    if(MQTTClient_subscribe(_mqtt_client, _pattern.c_str(), 1) != MQTTCLIENT_SUCCESS) {
         log_error("PAHO MQTT client subscription failed (${brokerUrl})")
           .arg("brokerUrl", _broker_url)
           .arg("clientUid", _client_uid)
@@ -344,15 +340,13 @@ void mqtt_bridge::add_certificate_pem(const memory::const_block blk) noexcept {
     }
 }
 //------------------------------------------------------------------------------
-void mqtt_bridge::add_ca_certificate_pem(
-  const memory::const_block blk) noexcept {
+void mqtt_bridge::add_ca_certificate_pem(const memory::const_block blk) noexcept {
     if(_context) {
         _context->add_ca_certificate_pem(blk);
     }
 }
 //------------------------------------------------------------------------------
-auto mqtt_bridge::add_connection(shared_holder<connection> conn) noexcept
-  -> bool {
+auto mqtt_bridge::add_connection(shared_holder<connection> conn) noexcept -> bool {
     _connection = std::move(conn);
     return true;
 }
@@ -512,9 +506,8 @@ auto mqtt_bridge::_handle_special(
     return should_be_forwarded;
 }
 //------------------------------------------------------------------------------
-auto mqtt_bridge::_do_send(
-  const message_id msg_id,
-  message_view& message) noexcept -> bool {
+auto mqtt_bridge::_do_send(const message_id msg_id, message_view& message) noexcept
+  -> bool {
     message.add_hop();
     if(_connection) [[likely]] {
         if(_connection->send(msg_id, message)) {
@@ -534,9 +527,8 @@ auto mqtt_bridge::_send(const message_id msg_id, message_view& message) noexcept
     return _do_send(msg_id, message);
 }
 //------------------------------------------------------------------------------
-auto mqtt_bridge::_do_push(
-  const message_id msg_id,
-  message_view& message) noexcept -> bool {
+auto mqtt_bridge::_do_push(const message_id msg_id, message_view& message) noexcept
+  -> bool {
     if(_state) [[likely]] {
         message.add_hop();
         _state->push(msg_id, message);
@@ -548,18 +540,14 @@ auto mqtt_bridge::_do_push(
     return false;
 }
 //------------------------------------------------------------------------------
-auto mqtt_bridge::_avg_msg_age_c2m() const noexcept
-  -> std::chrono::microseconds {
+auto mqtt_bridge::_avg_msg_age_c2m() const noexcept -> std::chrono::microseconds {
     return std::chrono::duration_cast<std::chrono::microseconds>(
-      _message_age_sum_c2m /
-      (_forwarded_messages_c2m + _dropped_messages_c2m + 1));
+      _message_age_sum_c2m / (_forwarded_messages_c2m + _dropped_messages_c2m + 1));
 }
 //------------------------------------------------------------------------------
-auto mqtt_bridge::_avg_msg_age_m2c() const noexcept
-  -> std::chrono::microseconds {
+auto mqtt_bridge::_avg_msg_age_m2c() const noexcept -> std::chrono::microseconds {
     return std::chrono::duration_cast<std::chrono::microseconds>(
-      _message_age_sum_m2c /
-      (_forwarded_messages_m2c + _dropped_messages_m2c + 1));
+      _message_age_sum_m2c / (_forwarded_messages_m2c + _dropped_messages_m2c + 1));
 }
 //------------------------------------------------------------------------------
 constexpr auto bridge_log_stat_msg_count() noexcept {
@@ -604,8 +592,7 @@ void mqtt_bridge::_log_bridge_stats_m2c() noexcept {
           float(bridge_log_stat_msg_count()) / interval.count()};
 
         _stats.message_age_milliseconds =
-          std::chrono::duration_cast<std::chrono::milliseconds>(
-            _avg_msg_age_m2c())
+          std::chrono::duration_cast<std::chrono::milliseconds>(_avg_msg_age_m2c())
             .count();
 
         log_chart_sample("msgPerSecI", msgs_per_sec);
@@ -625,8 +612,7 @@ auto mqtt_bridge::_forward_messages() noexcept -> work_done {
     some_true something_done{};
 
     const auto forward_conn_to_mqtt{
-      [this](
-        const message_id msg_id, message_age msg_age, message_view message) {
+      [this](const message_id msg_id, message_age msg_age, message_view message) {
           _message_age_sum_c2m += message.add_age(msg_age).age();
           if(message.too_old()) [[unlikely]] {
               ++_dropped_messages_c2m;
@@ -647,24 +633,23 @@ auto mqtt_bridge::_forward_messages() noexcept -> work_done {
     }
 
     if(_state) [[likely]] {
-        const auto forward_mqtt_to_conn{[this](
-                                          const message_id msg_id,
-                                          message_age msg_age,
-                                          message_view message) {
-            _message_age_sum_m2c += message.add_age(msg_age).age();
-            if(message.too_old()) [[unlikely]] {
-                ++_dropped_messages_m2c;
-                return true;
-            }
-            if(_should_log_bridge_stats_m2c()) [[unlikely]] {
-                _log_bridge_stats_m2c();
-            }
-            if(this->_handle_special(msg_id, message, true) == was_handled) {
-                return true;
-            }
-            this->_do_send(msg_id, message);
-            return true;
-        }};
+        const auto forward_mqtt_to_conn{
+          [this](
+            const message_id msg_id, message_age msg_age, message_view message) {
+              _message_age_sum_m2c += message.add_age(msg_age).age();
+              if(message.too_old()) [[unlikely]] {
+                  ++_dropped_messages_m2c;
+                  return true;
+              }
+              if(_should_log_bridge_stats_m2c()) [[unlikely]] {
+                  _log_bridge_stats_m2c();
+              }
+              if(this->_handle_special(msg_id, message, true) == was_handled) {
+                  return true;
+              }
+              this->_do_send(msg_id, message);
+              return true;
+          }};
 
         something_done(
           _state->fetch_messages({construct_from, forward_mqtt_to_conn}));
@@ -794,4 +779,3 @@ void mqtt_bridge::finish() noexcept {
 }
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus
-

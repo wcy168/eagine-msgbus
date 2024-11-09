@@ -40,9 +40,8 @@ void direct_roundtrip(auto& s) {
 
     auto fact{eagine::msgbus::make_direct_connection_factory(s.context())};
     test.ensure(bool(fact), "has factory");
-    auto cacc{
-      fact->make_acceptor(eagine::identifier{"test"})
-        .as(std::type_identity<eagine::msgbus::direct_acceptor_intf>{})};
+    auto cacc{fact->make_acceptor(eagine::identifier{"test"})
+                .as(std::type_identity<eagine::msgbus::direct_acceptor_intf>{})};
     test.ensure(bool(cacc), "has acceptor");
     auto read_conn{cacc->make_connection()};
     test.ensure(bool(read_conn), "has read connection");
@@ -109,9 +108,8 @@ void direct_roundtrip_thread(auto& s) {
 
     auto fact{eagine::msgbus::make_direct_connection_factory(s.context())};
     test.ensure(bool(fact), "has factory");
-    auto cacc{
-      fact->make_acceptor(eagine::identifier{"test"})
-        .as(std::type_identity<eagine::msgbus::direct_acceptor_intf>{})};
+    auto cacc{fact->make_acceptor(eagine::identifier{"test"})
+                .as(std::type_identity<eagine::msgbus::direct_acceptor_intf>{})};
     test.ensure(bool(cacc), "has acceptor");
     auto read_conn{cacc->make_connection()};
     test.ensure(bool(read_conn), "has read connection");

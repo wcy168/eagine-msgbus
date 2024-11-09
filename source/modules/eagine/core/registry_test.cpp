@@ -239,8 +239,7 @@ void registry_ping_pong(auto& s) {
                 test.fail("ping timeout");
                 break;
             }
-            the_reg.update_and_process().or_sleep_for(
-              std::chrono::milliseconds(1));
+            the_reg.update_and_process().or_sleep_for(std::chrono::milliseconds(1));
             trck.checkpoint(4);
         }
     }
@@ -274,8 +273,7 @@ void registry_wait_ping_pong(auto& s) {
                 test.fail("ping timeout");
                 break;
             }
-            the_reg.update_and_process().or_sleep_for(
-              std::chrono::milliseconds(1));
+            the_reg.update_and_process().or_sleep_for(std::chrono::milliseconds(1));
             trck.checkpoint(3);
         }
     }

@@ -49,9 +49,8 @@ private:
 export struct application_info_consumer_signals {
     /// @brief Triggered on receipt of response about endpoint application name.
     /// @see query_application_name
-    signal<void(
-      const result_context&,
-      const valid_if_not_empty<std::string>&) noexcept>
+    signal<
+      void(const result_context&, const valid_if_not_empty<std::string>&) noexcept>
       application_name_received;
 };
 //------------------------------------------------------------------------------

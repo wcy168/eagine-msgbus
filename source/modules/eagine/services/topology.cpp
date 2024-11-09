@@ -50,13 +50,11 @@ struct network_topology_intf : interface<network_topology_intf> {
 
     virtual auto decode_router_shutdown(
       const message_context& msg_ctx,
-      const stored_message& message) noexcept
-      -> std::optional<router_shutdown> = 0;
+      const stored_message& message) noexcept -> std::optional<router_shutdown> = 0;
 
     virtual auto decode_bridge_shutdown(
       const message_context& msg_ctx,
-      const stored_message& message) noexcept
-      -> std::optional<bridge_shutdown> = 0;
+      const stored_message& message) noexcept -> std::optional<bridge_shutdown> = 0;
 
     virtual auto decode_endpoint_shutdown(
       const message_context& msg_ctx,
@@ -159,22 +157,19 @@ public:
 
     auto decode_router_shutdown(
       const message_context& msg_ctx,
-      const stored_message& message) noexcept
-      -> std::optional<router_shutdown> {
+      const stored_message& message) noexcept -> std::optional<router_shutdown> {
         return _impl->decode_router_shutdown(msg_ctx, message);
     }
 
     auto decode_bridge_shutdown(
       const message_context& msg_ctx,
-      const stored_message& message) noexcept
-      -> std::optional<bridge_shutdown> {
+      const stored_message& message) noexcept -> std::optional<bridge_shutdown> {
         return _impl->decode_bridge_shutdown(msg_ctx, message);
     }
 
     auto decode_endpoint_shutdown(
       const message_context& msg_ctx,
-      const stored_message& message) noexcept
-      -> std::optional<endpoint_shutdown> {
+      const stored_message& message) noexcept -> std::optional<endpoint_shutdown> {
         return _impl->decode_endpoint_shutdown(msg_ctx, message);
     }
 
@@ -206,4 +201,3 @@ private:
 };
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus
-

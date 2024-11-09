@@ -29,8 +29,7 @@ struct str_utils_server
     auto reverse(const message_context&, const stored_message& msg) noexcept
       -> bool {
         auto str = as_chars(copy(msg.content(), _buf));
-        log_trace("received request: ${content}")
-          .arg(identifier{"content"}, str);
+        log_trace("received request: ${content}").arg(identifier{"content"}, str);
         memory::reverse(str);
         bus_node().post(message_id{"StrUtilRes", "Reverse"}, as_bytes(str));
         return true;
@@ -73,8 +72,7 @@ struct str_utils_client
         bus_node().post(message_id{"StrUtilReq", "UpperCase"}, as_bytes(str));
     }
 
-    auto print(const message_context&, const stored_message& msg) noexcept
-      -> bool {
+    auto print(const message_context&, const stored_message& msg) noexcept -> bool {
         log_info("received response: ${content}")
           .arg(identifier{"content"}, msg.text_content());
         --_remaining;
@@ -132,4 +130,3 @@ auto main(main_ctx& ctx) -> int {
 auto main(int argc, const char** argv) -> int {
     return eagine::default_main(argc, argv, eagine::main);
 }
-

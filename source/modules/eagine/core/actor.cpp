@@ -109,8 +109,7 @@ protected:
     /// @brief Constructor usable from derived classes
     template <typename Derived, typename Class, typename... MsgMaps>
     actor(Derived&& temp, Class* instance, const MsgMaps... msg_maps) noexcept
-        requires((sizeof...(MsgMaps) == N) and
-                 std::is_base_of_v<actor, Derived>)
+        requires((sizeof...(MsgMaps) == N) and std::is_base_of_v<actor, Derived>)
       : _endpoint{_move_endpoint(
           std::move(temp._endpoint),
           make_callable_ref<&actor::_process_message>(this))}
@@ -130,4 +129,3 @@ private:
 };
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus
-

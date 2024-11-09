@@ -42,13 +42,10 @@ protected:
     }
 
 private:
-    auto _handle_ping(
-      const message_context&,
-      const stored_message& message) noexcept -> bool {
+    auto _handle_ping(const message_context&, const stored_message& message) noexcept
+      -> bool {
         if(respond_to_ping(
-             message.source_id,
-             message.sequence_no,
-             this->verify_bits(message))) {
+             message.source_id, message.sequence_no, this->verify_bits(message))) {
             this->bus_node().respond_to(message, msgbus_id{"pong"}, {});
         }
         return true;
@@ -92,8 +89,7 @@ struct pinger_intf : interface<pinger_intf> {
 
     virtual auto decode_ping_response(
       const message_context& msg_ctx,
-      const stored_message& message) noexcept
-      -> std::optional<ping_response> = 0;
+      const stored_message& message) noexcept -> std::optional<ping_response> = 0;
 
     virtual auto update() noexcept -> work_done = 0;
 
@@ -120,8 +116,7 @@ export struct pinger_signals {
     signal<void(const ping_timeout&) noexcept> ping_timeouted;
 };
 //------------------------------------------------------------------------------
-auto make_pinger_impl(subscriber&, pinger_signals&)
-  -> unique_holder<pinger_intf>;
+auto make_pinger_impl(subscriber&, pinger_signals&) -> unique_holder<pinger_intf>;
 //------------------------------------------------------------------------------
 /// @brief Service sending to pings from the pingable counterparts.
 /// @ingroup msgbus
@@ -220,4 +215,3 @@ private:
 };
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus
-

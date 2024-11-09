@@ -78,8 +78,7 @@ auto SolutionIntervalViewModel::getIntervals() const -> const QVariantList& {
     return _intervalList;
 }
 //------------------------------------------------------------------------------
-auto SolutionIntervalViewModel::getFixedIntervals() const
-  -> const QVariantList& {
+auto SolutionIntervalViewModel::getFixedIntervals() const -> const QVariantList& {
     return _fixedIntervalList;
 }
 //------------------------------------------------------------------------------

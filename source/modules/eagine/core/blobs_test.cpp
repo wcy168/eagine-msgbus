@@ -51,8 +51,7 @@ public:
       [[maybe_unused]] const eagine::msgbus::message_info& message,
       [[maybe_unused]] const eagine::msgbus::blob_info& info) noexcept final {
 
-        _test.check(
-          msg_id.class_() == eagine::identifier{"test"}, "message id");
+        _test.check(msg_id.class_() == eagine::identifier{"test"}, "message id");
         _done = true;
         _trck.checkpoint(2);
     }
@@ -80,8 +79,7 @@ public:
 
     auto check_stored(
       [[maybe_unused]] const eagine::span_size_t offs,
-      [[maybe_unused]] eagine::memory::const_block data) noexcept
-      -> bool final {
+      [[maybe_unused]] eagine::memory::const_block data) noexcept -> bool final {
 
         _test.check(offs >= 0, "offset ok 3");
         _test.check(offs < _expected_size, "offset ok 4");
@@ -128,8 +126,7 @@ void blobs_roundtrip_zeroes_single_big(auto& s) {
       eagine::construct_from, send_s2r};
 
     auto send_r2s{
-      [&](
-        const eagine::message_id, const eagine::msgbus::message_view&) -> bool {
+      [&](const eagine::message_id, const eagine::msgbus::message_view&) -> bool {
           return true;
       }};
     const eagine::msgbus::blob_manipulator::send_handler handler_r2s{
@@ -190,8 +187,7 @@ void blobs_roundtrip_zeroes_single(unsigned r, auto& s) {
       eagine::construct_from, send_s2r};
 
     auto send_r2s{
-      [&](
-        const eagine::message_id, const eagine::msgbus::message_view&) -> bool {
+      [&](const eagine::message_id, const eagine::msgbus::message_view&) -> bool {
           return true;
       }};
     const eagine::msgbus::blob_manipulator::send_handler handler_r2s{
@@ -264,8 +260,7 @@ public:
       [[maybe_unused]] const eagine::msgbus::message_info& message,
       [[maybe_unused]] const eagine::msgbus::blob_info& info) noexcept final {
 
-        _test.check(
-          msg_id.method() == eagine::identifier{"test"}, "message id");
+        _test.check(msg_id.method() == eagine::identifier{"test"}, "message id");
         _done = true;
         _trck.checkpoint(2);
     }
@@ -293,8 +288,7 @@ public:
 
     auto check_stored(
       [[maybe_unused]] const eagine::span_size_t offs,
-      [[maybe_unused]] eagine::memory::const_block data) noexcept
-      -> bool final {
+      [[maybe_unused]] eagine::memory::const_block data) noexcept -> bool final {
 
         _test.check(offs >= 0, "offset ok 3");
         _test.check(offs < _expected_size, "offset ok 4");
@@ -341,8 +335,7 @@ void blobs_roundtrip_bfs_single(auto& s) {
       eagine::construct_from, send_s2r};
 
     auto send_r2s{
-      [&](
-        const eagine::message_id, const eagine::msgbus::message_view&) -> bool {
+      [&](const eagine::message_id, const eagine::msgbus::message_view&) -> bool {
           return true;
       }};
     const eagine::msgbus::blob_manipulator::send_handler handler_r2s{
@@ -417,8 +410,7 @@ public:
       [[maybe_unused]] const eagine::msgbus::message_info& message,
       [[maybe_unused]] const eagine::msgbus::blob_info& info) noexcept final {
 
-        _test.check(
-          msg_id.method() == eagine::identifier{"test"}, "message id");
+        _test.check(msg_id.method() == eagine::identifier{"test"}, "message id");
         ++_done;
         _trck.checkpoint(2);
     }
@@ -446,8 +438,7 @@ public:
 
     auto check_stored(
       [[maybe_unused]] const eagine::span_size_t offs,
-      [[maybe_unused]] eagine::memory::const_block data) noexcept
-      -> bool final {
+      [[maybe_unused]] eagine::memory::const_block data) noexcept -> bool final {
 
         _test.check(offs >= 0, "offset ok 3");
         _test.check(offs < _expected_size, "offset ok 4");
@@ -494,8 +485,7 @@ void blobs_roundtrip_ces_multiple(auto& s) {
       eagine::construct_from, send_s2r};
 
     auto send_r2s{
-      [&](
-        const eagine::message_id, const eagine::msgbus::message_view&) -> bool {
+      [&](const eagine::message_id, const eagine::msgbus::message_view&) -> bool {
           return true;
       }};
     const eagine::msgbus::blob_manipulator::send_handler handler_r2s{
@@ -548,37 +538,34 @@ void blobs_roundtrip_chunk_signals_finished(auto& s) {
       s.context(), send_msg_id, resend_msg_id, prepare_msg_id};
 
     eagine::msgbus::blob_stream_signals signals;
-    std::map<eagine::identifier_t, std::array<eagine::span_size_t, 2>>
-      blob_sizes;
-    const auto check_stream_data{
-      [&](const eagine::msgbus::blob_stream_chunk& chunk) {
-          test.check(chunk.offset >= 0, "offset ok 1");
-          test.check(
-            chunk.offset <= blob_sizes[chunk.request_id][1], "offset ok 2");
-          for(const auto blk : chunk.data) {
-              for(const auto b : blk) {
-                  test.check(
-                    b == eagine::byte{0xBF} or b == eagine::byte{0xCE},
-                    "content is ok");
-                  trck.checkpoint(2);
-              }
-              blob_sizes[chunk.request_id][1] += blk.size();
-          }
-      }};
+    std::map<eagine::identifier_t, std::array<eagine::span_size_t, 2>> blob_sizes;
+    const auto check_stream_data{[&](
+                                   const eagine::msgbus::blob_stream_chunk& chunk) {
+        test.check(chunk.offset >= 0, "offset ok 1");
+        test.check(chunk.offset <= blob_sizes[chunk.request_id][1], "offset ok 2");
+        for(const auto blk : chunk.data) {
+            for(const auto b : blk) {
+                test.check(
+                  b == eagine::byte{0xBF} or b == eagine::byte{0xCE},
+                  "content is ok");
+                trck.checkpoint(2);
+            }
+            blob_sizes[chunk.request_id][1] += blk.size();
+        }
+    }};
     signals.blob_stream_data_appended.connect(
       {eagine::construct_from, check_stream_data});
 
     unsigned done{0};
-    const auto check_stream_finished{
-      [&](const eagine::identifier_t request_id) {
-          test.check_equal(
-            blob_sizes[request_id][0],
-            blob_sizes[request_id][1],
-            "blob data complete");
-          blob_sizes.erase(request_id);
-          ++done;
-          trck.checkpoint(3);
-      }};
+    const auto check_stream_finished{[&](const eagine::identifier_t request_id) {
+        test.check_equal(
+          blob_sizes[request_id][0],
+          blob_sizes[request_id][1],
+          "blob data complete");
+        blob_sizes.erase(request_id);
+        ++done;
+        trck.checkpoint(3);
+    }};
     signals.blob_stream_finished.connect(
       {eagine::construct_from, check_stream_finished});
 
@@ -597,8 +584,7 @@ void blobs_roundtrip_chunk_signals_finished(auto& s) {
       eagine::construct_from, send_s2r};
 
     auto send_r2s{
-      [&](
-        const eagine::message_id, const eagine::msgbus::message_view&) -> bool {
+      [&](const eagine::message_id, const eagine::msgbus::message_view&) -> bool {
           return true;
       }};
     const eagine::msgbus::blob_manipulator::send_handler handler_r2s{
@@ -671,8 +657,7 @@ void blobs_roundtrip_stream_signals_finished(auto& s) {
       s.context(), send_msg_id, resend_msg_id, prepare_msg_id};
 
     eagine::msgbus::blob_stream_signals signals;
-    std::map<eagine::identifier_t, std::array<eagine::span_size_t, 2>>
-      blob_sizes;
+    std::map<eagine::identifier_t, std::array<eagine::span_size_t, 2>> blob_sizes;
     const auto check_stream_data{
       [&](const eagine::msgbus::blob_stream_chunk& chunk) {
           for(const auto blk : chunk.data) {
@@ -691,16 +676,15 @@ void blobs_roundtrip_stream_signals_finished(auto& s) {
       {eagine::construct_from, check_stream_data});
 
     unsigned done{0};
-    const auto check_stream_finished{
-      [&](const eagine::identifier_t request_id) {
-          test.check_equal(
-            blob_sizes[request_id][0],
-            blob_sizes[request_id][1],
-            "blob data complete");
-          blob_sizes.erase(request_id);
-          ++done;
-          trck.checkpoint(3);
-      }};
+    const auto check_stream_finished{[&](const eagine::identifier_t request_id) {
+        test.check_equal(
+          blob_sizes[request_id][0],
+          blob_sizes[request_id][1],
+          "blob data complete");
+        blob_sizes.erase(request_id);
+        ++done;
+        trck.checkpoint(3);
+    }};
     signals.blob_stream_finished.connect(
       {eagine::construct_from, check_stream_finished});
 
@@ -718,9 +702,8 @@ void blobs_roundtrip_stream_signals_finished(auto& s) {
     const eagine::msgbus::blob_manipulator::send_handler handler_s2r{
       eagine::construct_from, send_s2r};
 
-    auto send_r2s = [&](
-                      const eagine::message_id,
-                      const eagine::msgbus::message_view&) -> bool {
+    auto send_r2s =
+      [&](const eagine::message_id, const eagine::msgbus::message_view&) -> bool {
         return true;
     };
     const eagine::msgbus::blob_manipulator::send_handler handler_r2s{
@@ -823,8 +806,7 @@ void blobs_roundtrip_chunk_signals_failed(auto& s) {
       eagine::construct_from, send_s2r};
 
     auto send_r2s{
-      [&](
-        const eagine::message_id, const eagine::msgbus::message_view&) -> bool {
+      [&](const eagine::message_id, const eagine::msgbus::message_view&) -> bool {
           return true;
       }};
     const eagine::msgbus::blob_manipulator::send_handler handler_r2s{

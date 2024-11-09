@@ -101,9 +101,8 @@ struct subscriber_discovery_intf : interface<subscriber_discovery_intf> {
       -> std::optional<subscriber_not_subscribed> = 0;
 };
 //------------------------------------------------------------------------------
-auto make_subscriber_discovery_impl(
-  subscriber& base,
-  subscriber_discovery_signals&) -> unique_holder<subscriber_discovery_intf>;
+auto make_subscriber_discovery_impl(subscriber& base, subscriber_discovery_signals&)
+  -> unique_holder<subscriber_discovery_intf>;
 //------------------------------------------------------------------------------
 /// @brief Service discovering information about endpoint status and subscriptions.
 /// @ingroup msgbus
@@ -116,8 +115,7 @@ class subscriber_discovery
 public:
     auto decode_subscriber_alive(
       const message_context& msg_ctx,
-      const stored_message& message) noexcept
-      -> std::optional<subscriber_alive> {
+      const stored_message& message) noexcept -> std::optional<subscriber_alive> {
         return _impl->decode_subscriber_alive(msg_ctx, message);
     }
 
@@ -168,4 +166,3 @@ private:
 };
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus
-

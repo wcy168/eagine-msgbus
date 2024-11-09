@@ -29,8 +29,7 @@ auto main(main_ctx& ctx) -> int {
     auto consume = [&](const msgbus::blob_stream_chunk& chunk) {
         for(const auto& blk : chunk.data) {
             for(auto b : blk) {
-                max_count =
-                  math::maximum(max_count, ++byte_counts[std_size(b)]);
+                max_count = math::maximum(max_count, ++byte_counts[std_size(b)]);
                 if((++streamed_bytes % (4 * 1024 * 1024)) == 0) {
                     ctx.log()
                       .info("streamed ${count}")

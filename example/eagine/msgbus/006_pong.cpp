@@ -46,8 +46,7 @@ public:
         return true;
     }
 
-    auto shutdown(const message_context&, const stored_message&) noexcept
-      -> bool {
+    auto shutdown(const message_context&, const stored_message&) noexcept -> bool {
         _done = true;
         bus_node().log_info("received shutdown message");
         return true;
@@ -94,4 +93,3 @@ auto main(main_ctx& ctx) -> int {
 auto main(int argc, const char** argv) -> int {
     return eagine::default_main(argc, argv, eagine::main);
 }
-

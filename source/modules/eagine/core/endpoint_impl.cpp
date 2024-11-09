@@ -207,8 +207,7 @@ auto endpoint::_handle_flow_info(const message_view& message) noexcept
             } else if(
               (flow_info.average_message_age() < _flow_age_warning) and
               (_flow_info.average_message_age() >= _flow_age_warning)) {
-                log_change(
-                  "average message age returned to normal: ${avgMsgAge}")
+                log_change("average message age returned to normal: ${avgMsgAge}")
                   .tag("msgAgeNorm")
                   .arg("warnLimit", _flow_age_warning)
                   .arg("avgMsgAge", flow_info.average_message_age());
@@ -234,8 +233,7 @@ auto endpoint::_handle_endpoint_certificate(const message_view& message) noexcep
       .arg("source", message.source_id)
       .arg("pem", message.content());
 
-    if(_context->add_remote_certificate_pem(
-         message.source_id, message.content())) {
+    if(_context->add_remote_certificate_pem(message.source_id, message.content())) {
         log_debug("verified and stored remote endpoint certificate")
           .arg("endpoint", _endpoint_id)
           .arg("source", message.source_id);
@@ -285,8 +283,7 @@ auto endpoint::_handle_sign_nonce_request(const message_view& message) noexcept
 //------------------------------------------------------------------------------
 auto endpoint::_handle_signed_nonce(const message_view& message) noexcept
   -> message_handling_result {
-    if(_context->verify_remote_signature(
-         message.content(), message.source_id)) {
+    if(_context->verify_remote_signature(message.content(), message.source_id)) {
         log_debug("verified nonce signature")
           .arg("endpoint", _endpoint_id)
           .arg("source", message.source_id);
@@ -319,8 +316,7 @@ auto endpoint::_handle_stats_query(const message_view& message) noexcept
     _stats.uptime_seconds = _uptime_seconds();
 
     auto temp{default_serialize_buffer_for(_stats)};
-    if(const auto serialized{default_serialize(_stats, cover(temp))})
-      [[likely]] {
+    if(const auto serialized{default_serialize(_stats, cover(temp))}) [[likely]] {
         message_view response{*serialized};
         response.setup_response(message);
         if(post(msgbus_id{"statsEndpt"}, response)) [[likely]] {
@@ -411,9 +407,8 @@ auto endpoint::_store_message(
   const message_view& message) noexcept -> bool {
     ++_stats.received_messages;
     if(_handle_special(msg_id, message) == should_be_stored) {
-        if(
-          (message.target_id == _endpoint_id) or
-          not is_valid_id(message.target_id)) [[likely]] {
+        if((message.target_id == _endpoint_id) or not is_valid_id(message.target_id))
+          [[likely]] {
             if(auto found{_find_incoming(msg_id)}) [[likely]] {
                 log_trace("stored message ${message}").arg("message", msg_id);
                 found->queue.push(message).add_age(msg_age);
@@ -443,9 +438,7 @@ auto endpoint::_accept_message(
         return true;
     }
     if(auto found{_find_incoming(msg_id)}) [[likely]] {
-        if(
-          (message.target_id == _endpoint_id) or
-          not is_valid_id(message.target_id)) {
+        if((message.target_id == _endpoint_id) or not is_valid_id(message.target_id)) {
             log_trace("accepted message ${message}").arg("message", msg_id);
             found->queue.push(message);
         }
@@ -475,8 +468,7 @@ auto endpoint::add_connection(shared_holder<connection> conn) noexcept -> bool {
               .arg("oldType", _connection->type_id())
               .arg("newType", conn->type_id());
         } else {
-            log_debug("adding connection type ${type}")
-              .arg("type", conn->type_id());
+            log_debug("adding connection type ${type}").arg("type", conn->type_id());
         }
         _connection = std::move(conn);
         _log_no_connection.reset();
@@ -491,8 +483,7 @@ auto endpoint::is_usable() const noexcept -> bool {
     return _connection and _connection->is_usable();
 }
 //------------------------------------------------------------------------------
-auto endpoint::max_data_size() const noexcept
-  -> valid_if_positive<span_size_t> {
+auto endpoint::max_data_size() const noexcept -> valid_if_positive<span_size_t> {
     span_size_t result{0};
     if(is_usable()) [[likely]] {
         if(const auto opt_max_size{_connection->max_data_size()}) {
@@ -537,9 +528,7 @@ auto endpoint::post_signed(
         const auto max_size = *opt_size;
         return _outgoing.push_if(
           [this, msg_id, &msg_view, max_size](
-            message_id& dst_msg_id,
-            message_timestamp&,
-            stored_message& message) {
+            message_id& dst_msg_id, message_timestamp&, stored_message& message) {
               message.assign(msg_view);
               if(message.store_and_sign(
                    msg_view.content(), max_size, ctx(), *this)) {
@@ -555,8 +544,7 @@ auto endpoint::post_signed(
 //------------------------------------------------------------------------------
 auto endpoint::_update_no_connection() noexcept -> work_done {
     some_true something_done{};
-    log_warning(_log_no_connection, "endpoint has no connection")
-      .tag("noConnect");
+    log_warning(_log_no_connection, "endpoint has no connection").tag("noConnect");
     if(_had_working_connection) {
         _had_working_connection = false;
         connection_lost();
@@ -607,8 +595,7 @@ auto endpoint::_update_send_outbox() noexcept -> work_done {
 
     log_debug("sending ${count} messages from outbox")
       .arg("count", _outgoing.count());
-    return _outgoing.fetch_all(
-      make_callable_ref<&endpoint::_handle_send>(this));
+    return _outgoing.fetch_all(make_callable_ref<&endpoint::_handle_send>(this));
 }
 //------------------------------------------------------------------------------
 auto endpoint::update() noexcept -> work_done {
@@ -700,8 +687,8 @@ void endpoint::post_meta_message(
   const message_id meta_msg_id,
   const message_id msg_id) noexcept {
     auto temp{default_serialize_buffer_for(msg_id)};
-    if(const auto serialized{
-         default_serialize_message_type(msg_id, cover(temp))}) [[likely]] {
+    if(const auto serialized{default_serialize_message_type(msg_id, cover(temp))})
+      [[likely]] {
         message_view meta_msg{*serialized};
         meta_msg.set_sequence_no(_instance_id);
         post(meta_msg_id, meta_msg);
@@ -717,8 +704,8 @@ void endpoint::post_meta_message_to(
   const message_id meta_msg_id,
   const message_id msg_id) noexcept {
     auto temp{default_serialize_buffer_for(msg_id)};
-    if(const auto serialized{
-         default_serialize_message_type(msg_id, cover(temp))}) [[likely]] {
+    if(const auto serialized{default_serialize_message_type(msg_id, cover(temp))})
+      [[likely]] {
         message_view meta_msg{*serialized};
         meta_msg.set_target_id(target_id);
         meta_msg.set_sequence_no(_instance_id);
@@ -732,8 +719,7 @@ void endpoint::post_meta_message_to(
 }
 //------------------------------------------------------------------------------
 void endpoint::say_subscribes_to(const message_id msg_id) noexcept {
-    log_debug("announces subscription to message ${message}")
-      .arg("message", msg_id);
+    log_debug("announces subscription to message ${message}").arg("message", msg_id);
     post_meta_message(msgbus_id{"subscribTo"}, msg_id);
 }
 //------------------------------------------------------------------------------
@@ -770,8 +756,7 @@ void endpoint::query_subscriptions_of(const endpoint_id_t target_id) noexcept {
 }
 //------------------------------------------------------------------------------
 void endpoint::query_subscribers_of(const message_id msg_id) noexcept {
-    log_debug("querying subscribers of message ${message}")
-      .arg("message", msg_id);
+    log_debug("querying subscribers of message ${message}").arg("message", msg_id);
     post_meta_message(msgbus_id{"qrySubscrb"}, msg_id);
 }
 //------------------------------------------------------------------------------

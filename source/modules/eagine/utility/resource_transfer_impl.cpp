@@ -44,8 +44,7 @@ resource_data_server_node::resource_data_server_node(
 }
 //------------------------------------------------------------------------------
 void resource_data_server_node::_init() {
-    connect<&resource_data_server_node::_handle_shutdown>(
-      this, shutdown_requested);
+    connect<&resource_data_server_node::_handle_shutdown>(this, shutdown_requested);
     auto& info = provided_endpoint_info();
     info.display_name = "resource server node";
     info.description = "message bus resource server";
@@ -53,8 +52,7 @@ void resource_data_server_node::_init() {
     main_context()
       .config()
       .get<std::string>("msgbus.resource_server.root_path")
-      .and_then(
-        [this](const auto& fs_root_path) { set_file_root(fs_root_path); });
+      .and_then([this](const auto& fs_root_path) { set_file_root(fs_root_path); });
 }
 //------------------------------------------------------------------------------
 void resource_data_server_node::_handle_shutdown(
@@ -69,8 +67,7 @@ void resource_data_server_node::_handle_shutdown(
     _done = true;
 }
 //------------------------------------------------------------------------------
-auto resource_data_server_node::update_message_age()
-  -> resource_data_server_node& {
+auto resource_data_server_node::update_message_age() -> resource_data_server_node& {
     average_message_age(bus_node().flow_average_message_age());
     return *this;
 }
@@ -204,8 +201,7 @@ auto resource_data_consumer_node::embedded_resource_locator(
     return url{std::move(url_str)};
 }
 //------------------------------------------------------------------------------
-auto resource_data_consumer_node::update_and_process_all() noexcept
-  -> work_done {
+auto resource_data_consumer_node::update_and_process_all() noexcept -> work_done {
     some_true something_done;
 
     for(auto& [server_id, sinfo] : _current_servers) {
@@ -256,8 +252,7 @@ auto resource_data_consumer_node::has_pending_resource(
             _embedded_resources.end());
 }
 //------------------------------------------------------------------------------
-auto resource_data_consumer_node::has_pending_resources() const noexcept
-  -> bool {
+auto resource_data_consumer_node::has_pending_resources() const noexcept -> bool {
     return not _streamed_resources.empty() or not _embedded_resources.empty();
 }
 //------------------------------------------------------------------------------
@@ -301,8 +296,7 @@ auto resource_data_consumer_node::_query_resource(
 }
 //------------------------------------------------------------------------------
 auto resource_data_consumer_node::stream_resource(
-  const resource_request_params& params)
-  -> std::pair<identifier_t, const url&> {
+  const resource_request_params& params) -> std::pair<identifier_t, const url&> {
     const auto request_id{get_request_id()};
     return _query_resource(
       request_id,
@@ -359,9 +353,7 @@ void resource_data_consumer_node::_handle_server_lost(
         }
     }
     _current_servers.erase(server_id);
-    log_info("resource server ${id} lost")
-      .tag("resSrvLost")
-      .arg("id", server_id);
+    log_info("resource server ${id} lost").tag("resSrvLost").arg("id", server_id);
 }
 //------------------------------------------------------------------------------
 void resource_data_consumer_node::_handle_resource_found(

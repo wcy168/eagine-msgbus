@@ -51,14 +51,11 @@ struct resource_server_intf : interface<resource_server_intf> {
 
     virtual auto has_pending_blobs() noexcept -> bool = 0;
 
-    virtual void average_message_age(
-      const std::chrono::microseconds) noexcept = 0;
+    virtual void average_message_age(const std::chrono::microseconds) noexcept = 0;
 
-    virtual void set_file_root(
-      const std::filesystem::path& root_path) noexcept = 0;
+    virtual void set_file_root(const std::filesystem::path& root_path) noexcept = 0;
 
-    virtual void notify_resource_available(
-      const string_view locator) noexcept = 0;
+    virtual void notify_resource_available(const string_view locator) noexcept = 0;
 };
 //------------------------------------------------------------------------------
 auto make_resource_server_impl(subscriber&, resource_server_driver&)
@@ -124,8 +121,7 @@ export struct resource_manipulator_signals {
 
     /// @brief Triggered when a server responds that is has not a resource.
     /// @see search_resource
-    signal<void(const endpoint_id_t, const url&) noexcept>
-      server_has_not_resource;
+    signal<void(const endpoint_id_t, const url&) noexcept> server_has_not_resource;
 
     /// @brief Triggered when a resource becomes available.
     signal<void(const endpoint_id_t, const url&) noexcept> resource_appeared;
@@ -157,8 +153,7 @@ struct resource_manipulator_intf : interface<resource_manipulator_intf> {
       const url& locator,
       shared_holder<target_blob_io> write_io,
       const message_priority priority,
-      const std::chrono::seconds max_time)
-      -> std::optional<message_sequence_t> = 0;
+      const std::chrono::seconds max_time) -> std::optional<message_sequence_t> = 0;
 };
 //------------------------------------------------------------------------------
 auto make_resource_manipulator_impl(subscriber&, resource_manipulator_signals&)
@@ -174,8 +169,7 @@ class resource_manipulator
   , public resource_manipulator_signals {
 
     using This = resource_manipulator;
-    using base =
-      require_services<Base, host_info_consumer, subscriber_discovery>;
+    using base = require_services<Base, host_info_consumer, subscriber_discovery>;
 
 public:
     /// @brief Returns the best-guess of server endpoint id for a URL.
@@ -207,8 +201,7 @@ public:
       const url& locator,
       shared_holder<target_blob_io> write_io,
       const message_priority priority,
-      const std::chrono::seconds max_time)
-      -> std::optional<message_sequence_t> {
+      const std::chrono::seconds max_time) -> std::optional<message_sequence_t> {
         return _impl->query_resource_content(
           endpoint_id, locator, std::move(write_io), priority, max_time);
     }
@@ -234,8 +227,7 @@ public:
       const url& locator,
       shared_holder<target_blob_io> write_io,
       const message_priority priority,
-      const std::chrono::seconds max_time)
-      -> std::optional<message_sequence_t> {
+      const std::chrono::seconds max_time) -> std::optional<message_sequence_t> {
         return query_resource_content(
           server_endpoint_id(locator),
           locator,
@@ -269,4 +261,3 @@ private:
 };
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus
-

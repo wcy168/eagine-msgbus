@@ -37,14 +37,8 @@ struct sudoku_rank_tuple
 
     template <typename... Args>
     sudoku_rank_tuple(const Args&... args) noexcept
-      : base{
-          nothing,
-          nothing,
-          nothing,
-          {args...},
-          {args...},
-          {args...},
-          {args...}} {}
+      : base{nothing, nothing, nothing, {args...}, {args...}, {args...}, {args...}} {
+    }
 
     template <unsigned S>
     auto get(const unsigned_constant<S>) noexcept -> auto& {
@@ -195,8 +189,7 @@ struct sudoku_helper_rank_info {
     memory::buffer serialize_buffer;
     int max_recursion{1};
 
-    std::vector<
-      std::tuple<endpoint_id_t, message_sequence_t, basic_sudoku_board<S>>>
+    std::vector<std::tuple<endpoint_id_t, message_sequence_t, basic_sudoku_board<S>>>
       boards;
 
     flat_set<endpoint_id_t> searches;
@@ -260,9 +253,9 @@ auto sudoku_helper_rank_info<S>::do_send_board(
   const bool is_solved) {
     serialize_buffer.ensure(default_serialize_buffer_size_for(candidate));
     const auto serialized{
-      (S >= 4) ? default_serialize_packed(
-                   candidate, cover(serialize_buffer), compressor)
-               : default_serialize(candidate, cover(serialize_buffer))};
+      (S >= 4)
+        ? default_serialize_packed(candidate, cover(serialize_buffer), compressor)
+        : default_serialize(candidate, cover(serialize_buffer))};
     assert(serialized);
 
     const unsigned_constant<S> rank{};
@@ -282,8 +275,7 @@ auto sudoku_helper_rank_info<S>::process_board(
   bool& done,
   int levels) noexcept {
     const auto send_board{[&, this](auto& board, bool is_solved) {
-        do_send_board(
-          bus, compressor, target_id, sequence_no, board, is_solved);
+        do_send_board(bus, compressor, target_id, sequence_no, board, is_solved);
     }};
     const auto process_recursive{[&, this](auto& board) {
         process_board(
@@ -360,8 +352,7 @@ public:
     }
 
     /// @brief Returns current idle time interval.
-    auto idle_time() const noexcept
-      -> std::chrono::steady_clock::duration final {
+    auto idle_time() const noexcept -> std::chrono::steady_clock::duration final {
         return std::chrono::steady_clock::now() - _activity_time;
     }
 
@@ -425,16 +416,12 @@ auto sudoku_helper_impl::_handle_board(
     basic_sudoku_board<S> board{};
 
     const auto deserialized{
-      (S >= 4)
-        ? default_deserialize_packed(board, message.content(), _compressor)
-        : default_deserialize(board, message.content())};
+      (S >= 4) ? default_deserialize_packed(board, message.content(), _compressor)
+               : default_deserialize(board, message.content())};
 
     if(deserialized) [[likely]] {
         info.add_board(
-          ctx.bus_node(),
-          message.source_id,
-          message.sequence_no,
-          std::move(board));
+          ctx.bus_node(), message.source_id, message.sequence_no, std::move(board));
         mark_activity();
     } else {
         base.bus_node()
@@ -512,8 +499,7 @@ struct sudoku_solver_rank_info {
 
     flat_map<sudoku_solver_key, pool_object<board_set, 8>> key_boards;
 
-    flat_map<sudoku_solver_key, std::chrono::steady_clock::time_point>
-      key_starts;
+    flat_map<sudoku_solver_key, std::chrono::steady_clock::time_point> key_starts;
 
     struct pending_info {
         pending_info(basic_sudoku_board<S> b)
@@ -599,9 +585,7 @@ struct sudoku_solver_rank_info {
       endpoint& bus,
       data_compressor& compressor) noexcept -> work_done;
 
-    void pending_done(
-      auto& solver,
-      const message_sequence_t sequence_no) noexcept;
+    void pending_done(auto& solver, const message_sequence_t sequence_no) noexcept;
 
     void helper_alive(
       auto& solver,
@@ -626,8 +610,7 @@ struct sudoku_solver_rank_info {
 };
 //------------------------------------------------------------------------------
 template <unsigned S>
-void sudoku_solver_rank_info<S>::queue_length_changed(
-  auto& solver) const noexcept {
+void sudoku_solver_rank_info<S>::queue_length_changed(auto& solver) const noexcept {
     if(solver.signals.queue_length_changed) {
         sudoku_board_queue_change change{.rank = S};
         for(const auto& key_and_boards : key_boards) {
@@ -693,8 +676,7 @@ auto sudoku_solver_rank_info<S>::handle_timeouted(
     });
     if(count > 0U) [[unlikely]] {
         base.bus_node()
-          .log_warning(
-            "replacing ${count} timeouted boards, ${pending} pending")
+          .log_warning("replacing ${count} timeouted boards, ${pending} pending")
           .tag("rplcdBords")
           .arg("count", count)
           .arg("enqueued", key_boards.size())
@@ -729,8 +711,7 @@ void sudoku_solver_rank_info<S>::process_solved(
         helper.reset(solved_by_helper.emplace(done.used_helper, 0L));
     }
     ++(*helper);
-    const auto duration{
-      std::chrono::steady_clock::now() - key_starts[done.key]};
+    const auto duration{std::chrono::steady_clock::now() - key_starts[done.key]};
     key_starts.erase(done.key);
     solver.signals.solved_signal(unsigned_constant<S>{})(
       result_context{msg_ctx, message},
@@ -782,9 +763,9 @@ void sudoku_solver_rank_info<S>::handle_response(
     basic_sudoku_board<S> board{};
 
     const auto deserialized{
-      (S >= 4) ? default_deserialize_packed(
-                   board, message.content(), solver.compressor)
-               : default_deserialize(board, message.content())};
+      (S >= 4)
+        ? default_deserialize_packed(board, message.content(), solver.compressor)
+        : default_deserialize(board, message.content())};
 
     if(deserialized) [[likely]] {
         const auto predicate{[&](const auto& entry) {
@@ -797,8 +778,7 @@ void sudoku_solver_rank_info<S>::handle_response(
         } else {
             pos = std::find_if(remaining.begin(), remaining.end(), predicate);
             if(pos != remaining.end()) {
-                if(process_pending_entry(
-                     solver, msg_ctx, message, *pos, board)) {
+                if(process_pending_entry(solver, msg_ctx, message, *pos, board)) {
                     remaining.erase(pos);
                 }
             }
@@ -870,8 +850,8 @@ auto sudoku_solver_rank_info<S>::send_board_to(
 }
 //------------------------------------------------------------------------------
 template <unsigned S>
-auto sudoku_solver_rank_info<S>::find_helpers(
-  span<endpoint_id_t> dst) const noexcept -> span<endpoint_id_t> {
+auto sudoku_solver_rank_info<S>::find_helpers(span<endpoint_id_t> dst) const noexcept
+  -> span<endpoint_id_t> {
     span_size_t done = 0;
     for(const auto helper_id : ready_helpers) {
         if(done < dst.size()) {
@@ -918,9 +898,8 @@ void sudoku_solver_rank_info<S>::pending_done(
         ready_helpers.insert(pos->used_helper);
         const unsigned_constant<S> rank{};
         if(solver.driver().already_done(pos->key, rank)) {
-            std::erase_if(remaining, [&](const auto& entry) {
-                return entry.key == pos->key;
-            });
+            std::erase_if(
+              remaining, [&](const auto& entry) { return entry.key == pos->key; });
         } else {
             remaining.emplace_back(std::move(*pos));
         }
@@ -942,8 +921,8 @@ void sudoku_solver_rank_info<S>::helper_alive(
 }
 //------------------------------------------------------------------------------
 template <unsigned S>
-auto sudoku_solver_rank_info<S>::has_enqueued(
-  const sudoku_solver_key& key) noexcept -> bool {
+auto sudoku_solver_rank_info<S>::has_enqueued(const sudoku_solver_key& key) noexcept
+  -> bool {
     return std::find_if(
              key_boards.begin(),
              key_boards.end(),
@@ -967,8 +946,7 @@ void sudoku_solver_rank_info<S>::reset(auto& solver) noexcept {
 }
 //------------------------------------------------------------------------------
 template <unsigned S>
-auto sudoku_solver_rank_info<S>::updated_count() const noexcept
-  -> std::intmax_t {
+auto sudoku_solver_rank_info<S>::updated_count() const noexcept -> std::intmax_t {
     return std::accumulate(
       updated_by_helper.begin(),
       updated_by_helper.end(),
@@ -983,8 +961,7 @@ auto sudoku_solver_rank_info<S>::solved_by_helper_count(
 }
 //------------------------------------------------------------------------------
 template <unsigned S>
-auto sudoku_solver_rank_info<S>::solved_count() const noexcept
-  -> std::intmax_t {
+auto sudoku_solver_rank_info<S>::solved_count() const noexcept -> std::intmax_t {
     return std::accumulate(
       solved_by_helper.begin(),
       solved_by_helper.end(),
@@ -1013,31 +990,26 @@ public:
     void init() noexcept final;
     auto update() noexcept -> work_done final;
 
-    void enqueue(sudoku_solver_key key, basic_sudoku_board<3> board) noexcept
-      final {
+    void enqueue(sudoku_solver_key key, basic_sudoku_board<3> board) noexcept final {
         _infos.get(unsigned_constant<3>{})
           .add_board(*this, std::move(key), std::move(board));
     }
-    void enqueue(sudoku_solver_key key, basic_sudoku_board<4> board) noexcept
-      final {
+    void enqueue(sudoku_solver_key key, basic_sudoku_board<4> board) noexcept final {
         _infos.get(unsigned_constant<4>{})
           .add_board(*this, std::move(key), std::move(board));
     }
-    void enqueue(sudoku_solver_key key, basic_sudoku_board<5> board) noexcept
-      final {
+    void enqueue(sudoku_solver_key key, basic_sudoku_board<5> board) noexcept final {
         _infos.get(unsigned_constant<5>{})
           .add_board(*this, std::move(key), std::move(board));
     }
-    void enqueue(sudoku_solver_key key, basic_sudoku_board<6> board) noexcept
-      final {
+    void enqueue(sudoku_solver_key key, basic_sudoku_board<6> board) noexcept final {
         _infos.get(unsigned_constant<6>{})
           .add_board(*this, std::move(key), std::move(board));
     }
 
     auto has_work() const noexcept -> bool final;
     void reset(unsigned) noexcept override;
-    auto has_enqueued(const sudoku_solver_key&, unsigned) noexcept
-      -> bool final;
+    auto has_enqueued(const sudoku_solver_key&, unsigned) noexcept -> bool final;
 
     void set_solution_timeout(
       unsigned rank,
@@ -1050,14 +1022,12 @@ public:
     auto updated_by_helper(const endpoint_id_t helper_id, const unsigned rank)
       const noexcept -> std::intmax_t final;
 
-    auto updated_count(const unsigned rank) const noexcept
-      -> std::intmax_t final;
+    auto updated_count(const unsigned rank) const noexcept -> std::intmax_t final;
 
     auto solved_by_helper(const endpoint_id_t helper_id, const unsigned rank)
       const noexcept -> std::intmax_t final;
 
-    auto solved_count(const unsigned rank) const noexcept
-      -> std::intmax_t final;
+    auto solved_count(const unsigned rank) const noexcept -> std::intmax_t final;
 
     subscriber& base;
     sudoku_solver_signals& signals;
@@ -1097,8 +1067,7 @@ private:
       const message_context& msg_ctx,
       const stored_message& message) noexcept -> bool {
 
-        _infos.get(unsigned_constant<S>{})
-          .handle_response(*this, msg_ctx, message);
+        _infos.get(unsigned_constant<S>{}).handle_response(*this, msg_ctx, message);
         return true;
     }
 
@@ -1119,11 +1088,9 @@ private:
     }
 
     template <unsigned S>
-    auto _handle_done(
-      const message_context&,
-      const stored_message& message) noexcept -> bool {
-        _infos.get(unsigned_constant<S>{})
-          .pending_done(*this, message.sequence_no);
+    auto _handle_done(const message_context&, const stored_message& message) noexcept
+      -> bool {
+        _infos.get(unsigned_constant<S>{}).pending_done(*this, message.sequence_no);
         return true;
     }
 
@@ -1233,8 +1200,7 @@ void sudoku_solver_impl::reset_solution_timeout(unsigned rank) noexcept {
       rank, [](auto& info) { info.solution_timeout.reset(); }, _infos);
 }
 //------------------------------------------------------------------------------
-auto sudoku_solver_impl::solution_timeouted(unsigned rank) const noexcept
-  -> bool {
+auto sudoku_solver_impl::solution_timeouted(unsigned rank) const noexcept -> bool {
     bool result = false;
     apply_to_sudoku_rank_unit(
       rank,
@@ -1249,9 +1215,7 @@ auto sudoku_solver_impl::updated_by_helper(
     std::intmax_t result{0};
     apply_to_sudoku_rank_unit(
       rank,
-      [&](const auto& info) {
-          result += info.updated_by_helper_count(helper_id);
-      },
+      [&](const auto& info) { result += info.updated_by_helper_count(helper_id); },
       _infos);
     return result;
 }
@@ -1270,9 +1234,7 @@ auto sudoku_solver_impl::solved_by_helper(
     std::intmax_t result{0};
     apply_to_sudoku_rank_unit(
       rank,
-      [&](const auto& info) {
-          result += info.solved_by_helper_count(helper_id);
-      },
+      [&](const auto& info) { result += info.solved_by_helper_count(helper_id); },
       _infos);
     return result;
 }
@@ -1420,9 +1382,7 @@ struct sudoku_tiling_rank_info : sudoku_tiles<S> {
         }
     }
 
-    void handle_solved(
-      auto& tiling,
-      const solved_sudoku_board<S>& sol) noexcept {
+    void handle_solved(auto& tiling, const solved_sudoku_board<S>& sol) noexcept {
 
         const auto coord{std::get<Coord>(sol.key)};
         if(this->set_board(coord, sol.board)) {
@@ -1468,11 +1428,7 @@ struct sudoku_tiling_rank_info : sudoku_tiles<S> {
           .arg_func([this, max_count](logger_backend& backend) {
               for(const auto& [helper_id, count] : helper_contrib) {
                   backend.add_float(
-                    "helper",
-                    "Histogram",
-                    float(0),
-                    float(count),
-                    float(max_count));
+                    "helper", "Histogram", float(0), float(count), float(max_count));
               }
           });
     }
@@ -1644,8 +1600,7 @@ public:
         return result;
     }
 
-    auto tiling_size(unsigned rank) const noexcept
-      -> std::tuple<int, int> final {
+    auto tiling_size(unsigned rank) const noexcept -> std::tuple<int, int> final {
         std::tuple<int, int> result{0, 0};
         apply_to_sudoku_rank_unit(
           rank, [&](auto& info) { result = info.tiling_size(); }, _infos);
@@ -1672,9 +1627,7 @@ auto make_sudoku_tiling_impl(
   sudoku_solver_intf& solver,
   sudoku_tiling_signals& tsigs) -> unique_holder<sudoku_tiling_intf> {
     return {
-      hold<sudoku_tiling_impl>,
-      static_cast<sudoku_solver_impl&>(solver),
-      tsigs};
+      hold<sudoku_tiling_impl>, static_cast<sudoku_solver_impl&>(solver), tsigs};
 }
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus

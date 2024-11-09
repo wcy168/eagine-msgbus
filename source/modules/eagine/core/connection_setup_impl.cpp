@@ -40,9 +40,7 @@ auto adapt_entry_arg(
     return _adapter{.name = name, .value = value};
 }
 //------------------------------------------------------------------------------
-connection_setup::connection_setup(
-  main_ctx_parent parent,
-  const nothing_t) noexcept
+connection_setup::connection_setup(main_ctx_parent parent, const nothing_t) noexcept
   : main_ctx_object{"ConnSetup", parent} {}
 //------------------------------------------------------------------------------
 void connection_setup::_do_setup_acceptors(

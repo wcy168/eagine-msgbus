@@ -158,13 +158,11 @@ auto main(main_ctx& ctx) -> int {
     relay.stream_retracted.connect({construct_from, on_stream_retracted});
 
     auto& provider =
-      the_reg
-        .emplace<msgbus::service_composition<msgbus::data_provider_example<>>>(
-          "PrvdrEndpt");
+      the_reg.emplace<msgbus::service_composition<msgbus::data_provider_example<>>>(
+        "PrvdrEndpt");
     auto& consumer =
-      the_reg
-        .emplace<msgbus::service_composition<msgbus::data_consumer_example<>>>(
-          "CnsmrEndpt");
+      the_reg.emplace<msgbus::service_composition<msgbus::data_consumer_example<>>>(
+        "CnsmrEndpt");
 
     while(not interrupted and not(provider.is_done() and consumer.is_done())) {
         the_reg.update_and_process().or_sleep_for(std::chrono::milliseconds{1});

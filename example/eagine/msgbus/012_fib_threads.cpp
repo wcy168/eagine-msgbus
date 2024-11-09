@@ -24,11 +24,9 @@ public:
           this,
           message_map<"Fibonacci", "FindServer", &fibonacci_server::is_ready>{},
           message_map<"Fibonacci", "Calculate", &fibonacci_server::calculate>{},
-          message_map<"Fibonacci", "Shutdown", &fibonacci_server::shutdown>{}) {
-    }
+          message_map<"Fibonacci", "Shutdown", &fibonacci_server::shutdown>{}) {}
 
-    auto shutdown(const message_context&, const stored_message&) noexcept
-      -> bool {
+    auto shutdown(const message_context&, const stored_message&) noexcept -> bool {
         _done = true;
         return true;
     }
@@ -114,8 +112,7 @@ public:
             if(serialize(arg, write_backend)) {
                 message_view msg_out{sink.done()};
                 msg_out.set_serializer_id(write_backend.type_id());
-                bus_node().respond_to(
-                  msg_in, {"Fibonacci", "Calculate"}, msg_out);
+                bus_node().respond_to(msg_in, {"Fibonacci", "Calculate"}, msg_out);
             }
         }
         return true;
@@ -166,17 +163,15 @@ auto main(main_ctx& ctx) -> int {
     workers.reserve(thread_count);
 
     for(span_size_t i = 0; i < thread_count; ++i) {
-        workers.emplace_back(
-          [srv_obj{main_ctx_object{"FibServer", ctx}},
-           connection{acceptor->make_connection()}]() mutable {
-              msgbus::fibonacci_server server(std::move(srv_obj));
-              server.add_connection(std::move(connection));
+        workers.emplace_back([srv_obj{main_ctx_object{"FibServer", ctx}},
+                              connection{acceptor->make_connection()}]() mutable {
+            msgbus::fibonacci_server server(std::move(srv_obj));
+            server.add_connection(std::move(connection));
 
-              while(not server.is_done()) {
-                  server.process_one().or_sleep_for(
-                    std::chrono::milliseconds(10));
-              }
-          });
+            while(not server.is_done()) {
+                server.process_one().or_sleep_for(std::chrono::milliseconds(10));
+            }
+        });
     }
 
     msgbus::router router(ctx);
@@ -208,4 +203,3 @@ auto main(main_ctx& ctx) -> int {
 auto main(int argc, const char** argv) -> int {
     return eagine::default_main(argc, argv, eagine::main);
 }
-

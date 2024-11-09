@@ -230,10 +230,8 @@ export template <
   template <typename...>
   class Required,
   typename... RequiredArgs>
-struct has_base_service<
-  BaseService<BaseOfBase, BaseArgs...>,
-  Required,
-  RequiredArgs...> : has_base_service<BaseOfBase, Required, RequiredArgs...> {};
+struct has_base_service<BaseService<BaseOfBase, BaseArgs...>, Required, RequiredArgs...>
+  : has_base_service<BaseOfBase, Required, RequiredArgs...> {};
 
 export template <
   class BaseOfBase,
@@ -276,4 +274,3 @@ struct get_required_services<Base, Required, Requirements...>
       require_service<require_services<Base, Requirements...>, Required>> {};
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus
-

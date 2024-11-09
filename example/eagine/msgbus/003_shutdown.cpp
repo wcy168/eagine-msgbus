@@ -47,8 +47,7 @@ public:
       const result_context&,
       const subscriber_unsubscribed& sub) noexcept {
         if(sub.message_type.is("Shutdown", "shutdown")) {
-            log_info("target ${id} disappeared")
-              .arg("id", sub.source.endpoint_id);
+            log_info("target ${id} disappeared").arg("id", sub.source.endpoint_id);
             _targets.erase(sub.source.endpoint_id);
         }
     }
@@ -108,4 +107,3 @@ auto main(main_ctx& ctx) -> int {
 auto main(int argc, const char** argv) -> int {
     return eagine::default_main(argc, argv, eagine::main);
 }
-

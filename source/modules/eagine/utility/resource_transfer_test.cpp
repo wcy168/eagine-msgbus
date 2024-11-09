@@ -50,24 +50,23 @@ void resource_transfer_1(auto& s) {
         consumer.blob_stream_data_appended.connect(
           {eagine::construct_from, consume});
 
-        const auto enqueue{
-          [&](
-            eagine::url res_locator,
-            const eagine::msgbus::message_priority msg_priority,
-            const bool chunks) {
-              if(chunks) {
-                  consumer.fetch_resource_chunks(
-                    {.locator = std::move(res_locator),
-                     .max_time = std::chrono::minutes{5},
-                     .priority = msg_priority},
-                    4 * 1024);
-              } else {
-                  consumer.stream_resource(
-                    {.locator = std::move(res_locator),
-                     .max_time = std::chrono::minutes{5},
-                     .priority = msg_priority});
-              }
-          }};
+        const auto enqueue{[&](
+                             eagine::url res_locator,
+                             const eagine::msgbus::message_priority msg_priority,
+                             const bool chunks) {
+            if(chunks) {
+                consumer.fetch_resource_chunks(
+                  {.locator = std::move(res_locator),
+                   .max_time = std::chrono::minutes{5},
+                   .priority = msg_priority},
+                  4 * 1024);
+            } else {
+                consumer.stream_resource(
+                  {.locator = std::move(res_locator),
+                   .max_time = std::chrono::minutes{5},
+                   .priority = msg_priority});
+            }
+        }};
 
         enqueue(
           eagine::url("eagires:///random?count=16777216"),

@@ -20,10 +20,12 @@ void endpoint_info_1(auto& s) {
     auto& ctx{s.context()};
     eagine::msgbus::registry the_reg{ctx};
 
-    auto& provider = the_reg.emplace<eagine::msgbus::service_composition<
-      eagine::msgbus::endpoint_info_provider<>>>("Provider");
-    auto& consumer = the_reg.emplace<eagine::msgbus::service_composition<
-      eagine::msgbus::endpoint_info_consumer<>>>("Consumer");
+    auto& provider = the_reg.emplace<
+      eagine::msgbus::service_composition<eagine::msgbus::endpoint_info_provider<>>>(
+      "Provider");
+    auto& consumer = the_reg.emplace<
+      eagine::msgbus::service_composition<eagine::msgbus::endpoint_info_consumer<>>>(
+      "Consumer");
 
     if(the_reg.wait_for_id_of(std::chrono::seconds{30}, provider, consumer)) {
         provider.provided_endpoint_info().display_name = "test provider";

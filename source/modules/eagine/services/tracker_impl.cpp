@@ -47,8 +47,7 @@ public:
         connect<&This::_handle_hostname_received>(this, host.hostname_received);
         connect<&This::_handle_router_appeared>(this, topology.router_appeared);
         connect<&This::_handle_bridge_appeared>(this, topology.bridge_appeared);
-        connect<&This::_handle_endpoint_appeared>(
-          this, topology.endpoint_appeared);
+        connect<&This::_handle_endpoint_appeared>(this, topology.endpoint_appeared);
         connect<&This::_handle_router_disappeared>(
           this, topology.router_disappeared);
         connect<&This::_handle_bridge_disappeared>(
@@ -137,9 +136,7 @@ public:
     }
 
 private:
-    void _handle_host_change(
-      const endpoint_id_t,
-      remote_host_state& host) noexcept {
+    void _handle_host_change(const endpoint_id_t, remote_host_state& host) noexcept {
         if(const auto changes{host.update().changes()}) {
             signals.host_changed(host, changes);
         }
@@ -167,8 +164,7 @@ private:
     void _handle_alive(
       const result_context&,
       const subscriber_alive& alive) noexcept {
-        _tracker
-          .notice_instance(alive.source.endpoint_id, alive.source.instance_id)
+        _tracker.notice_instance(alive.source.endpoint_id, alive.source.instance_id)
           .assign(node_kind::endpoint);
     }
 
@@ -274,8 +270,7 @@ private:
                 inst.set_app_name(*app_name).notice_alive();
                 _tracker.for_each_instance_node_state(
                   *inst_id, [&](auto, auto& inst_node) {
-                      inst_node.add_change(
-                        remote_node_change::application_info);
+                      inst_node.add_change(remote_node_change::application_info);
                   });
             }
         }
@@ -477,10 +472,9 @@ private:
         if(const auto host_id{node.host_id()}) {
             auto& host = _get_host(*host_id).notice_alive();
             host.set_power_supply(value);
-            _tracker.for_each_host_node_state(
-              *host_id, [&](auto, auto& host_node) {
-                  host_node.add_change(remote_node_change::sensor_values);
-              });
+            _tracker.for_each_host_node_state(*host_id, [&](auto, auto& host_node) {
+                host_node.add_change(remote_node_change::sensor_values);
+            });
         }
     }
 
@@ -507,9 +501,8 @@ private:
         return _tracker.get_node(id);
     }
 
-    auto _get_connection(
-      const endpoint_id_t id1,
-      const endpoint_id_t id2) noexcept -> node_connection_state& {
+    auto _get_connection(const endpoint_id_t id1, const endpoint_id_t id2) noexcept
+      -> node_connection_state& {
         return _tracker.get_connection(id1, id2);
     }
 

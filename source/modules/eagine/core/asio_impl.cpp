@@ -38,8 +38,7 @@ template <connection_addr_kind Kind, connection_protocol Proto>
 using asio_socket_type = typename asio_types<Kind, Proto>::socket_type;
 
 template <connection_addr_kind Kind, connection_protocol Proto>
-using asio_endpoint_type =
-  typename asio_socket_type<Kind, Proto>::endpoint_type;
+using asio_endpoint_type = typename asio_socket_type<Kind, Proto>::endpoint_type;
 
 template <typename Base, connection_addr_kind, connection_protocol>
 class asio_connection_info;
@@ -243,12 +242,10 @@ struct asio_connection_state : asio_connection_state_base {
         usage_ratio = float(total_used_size) / float(total_sent_size);
         const auto slack = 1.F - usage_ratio;
         const auto msgs_per_block =
-          total_sent_blocks
-            ? float(total_sent_messages) / float(total_sent_blocks)
-            : 0.F;
-        used_per_sec =
-          float(total_used_size) /
-          std::chrono::duration<float>(now - send_start_time).count();
+          total_sent_blocks ? float(total_sent_messages) / float(total_sent_blocks)
+                            : 0.F;
+        used_per_sec = float(total_used_size) /
+                       std::chrono::duration<float>(now - send_start_time).count();
         const auto sent_per_sec =
           float(total_sent_size) /
           std::chrono::duration<float>(now - send_start_time).count();
@@ -372,8 +369,7 @@ struct asio_connection_state : asio_connection_state_base {
         return false;
     }
 
-    auto start_send(asio_connection_group<Kind, Proto>& group) noexcept
-      -> bool {
+    auto start_send(asio_connection_group<Kind, Proto>& group) noexcept -> bool {
         if(not is_sending) {
             return start_send_if_needed(group, false);
         }
@@ -446,8 +442,7 @@ struct asio_connection_state : asio_connection_state_base {
           });
     }
 
-    auto start_receive(asio_connection_group<Kind, Proto>& group) noexcept
-      -> bool {
+    auto start_receive(asio_connection_group<Kind, Proto>& group) noexcept -> bool {
         if(not is_recving) {
             do_start_receive(group);
         }
@@ -575,8 +570,7 @@ public:
         return _outgoing.cleanup(to_be_removed);
     }
 
-    void on_received(const endpoint_type&, memory::const_block data) noexcept
-      final {
+    void on_received(const endpoint_type&, memory::const_block data) noexcept final {
         return _incoming.push(data);
     }
 
@@ -712,8 +706,7 @@ class asio_datagram_server_connection
   , public asio_connection_group<Kind, connection_protocol::datagram> {
 
     using base = asio_connection_base<Kind, connection_protocol::datagram>;
-    using endpoint_type =
-      asio_endpoint_type<Kind, connection_protocol::datagram>;
+    using endpoint_type = asio_endpoint_type<Kind, connection_protocol::datagram>;
 
 public:
     using base::base;
@@ -897,9 +890,7 @@ struct asio_types<connection_addr_kind::ipv4, connection_protocol::stream> {
 //------------------------------------------------------------------------------
 template <>
 class asio_connector<connection_addr_kind::ipv4, connection_protocol::stream>
-  : public asio_connection<
-      connection_addr_kind::ipv4,
-      connection_protocol::stream> {
+  : public asio_connection<connection_addr_kind::ipv4, connection_protocol::stream> {
 
     using base =
       asio_connection<connection_addr_kind::ipv4, connection_protocol::stream>;
@@ -935,9 +926,7 @@ public:
 private:
     asio::ip::tcp::resolver _resolver;
     std::tuple<std::string, ipv4_port> _addr;
-    timeout _should_reconnect{
-      adjusted_duration(std::chrono::seconds{1}),
-      nothing};
+    timeout _should_reconnect{adjusted_duration(std::chrono::seconds{1}), nothing};
     bool _connecting{false};
 
     void _start_connect(
@@ -1123,9 +1112,7 @@ struct asio_types<connection_addr_kind::ipv4, connection_protocol::datagram> {
 //------------------------------------------------------------------------------
 template <>
 class asio_connector<connection_addr_kind::ipv4, connection_protocol::datagram>
-  : public asio_connection<
-      connection_addr_kind::ipv4,
-      connection_protocol::datagram> {
+  : public asio_connection<connection_addr_kind::ipv4, connection_protocol::datagram> {
 
     using base =
       asio_connection<connection_addr_kind::ipv4, connection_protocol::datagram>;
@@ -1269,9 +1256,8 @@ class asio_connector<connection_addr_kind::filepath, connection_protocol::stream
   : public asio_connection<
       connection_addr_kind::filepath,
       connection_protocol::stream> {
-    using base = asio_connection<
-      connection_addr_kind::filepath,
-      connection_protocol::stream>;
+    using base =
+      asio_connection<connection_addr_kind::filepath, connection_protocol::stream>;
 
 public:
     asio_connector(
@@ -1550,8 +1536,7 @@ auto make_asio_udp_ipv4_connection_factory(main_ctx_parent parent)
 }
 
 auto make_asio_local_stream_connection_factory(
-  [[maybe_unused]] main_ctx_parent parent)
-  -> unique_holder<connection_factory> {
+  [[maybe_unused]] main_ctx_parent parent) -> unique_holder<connection_factory> {
 #if defined(ASIO_HAS_LOCAL_SOCKETS)
     return {
       hold<asio_connection_factory<
@@ -1564,4 +1549,3 @@ auto make_asio_local_stream_connection_factory(
 }
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus
-

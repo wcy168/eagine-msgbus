@@ -198,8 +198,8 @@ auto remote_instance_state::changes() noexcept -> remote_instance_changes {
     return {};
 }
 //------------------------------------------------------------------------------
-auto remote_instance_state::add_change(
-  const remote_instance_change change) noexcept -> remote_instance_state& {
+auto remote_instance_state::add_change(const remote_instance_change change) noexcept
+  -> remote_instance_state& {
     if(auto impl{_impl()}) {
         impl->changes |= change;
     }
@@ -229,8 +229,8 @@ auto remote_instance_state::set_host_id(const host_id_t host_id) noexcept
     return *this;
 }
 //------------------------------------------------------------------------------
-auto remote_instance_state::set_app_name(
-  const std::string& new_app_name) noexcept -> remote_instance_state& {
+auto remote_instance_state::set_app_name(const std::string& new_app_name) noexcept
+  -> remote_instance_state& {
     if(auto impl{_impl()}) {
         auto& i = *impl;
         auto app_name = _tracker.cached(new_app_name);
@@ -273,8 +273,7 @@ inline auto remote_host::_impl() const noexcept
     return _pimpl.ref();
 }
 //------------------------------------------------------------------------------
-inline auto remote_host::_impl() noexcept
-  -> optional_reference<remote_host_impl> {
+inline auto remote_host::_impl() noexcept -> optional_reference<remote_host_impl> {
     return _pimpl.ensure();
 }
 //------------------------------------------------------------------------------
@@ -344,8 +343,7 @@ auto remote_host::short_average_load_change() const noexcept
     if(auto impl{_impl()}) {
         auto& i = *impl;
         return {
-          i.short_average_load.delta(),
-          i.short_average_load.old_value() >= 0.F};
+          i.short_average_load.delta(), i.short_average_load.old_value() >= 0.F};
     }
     return {};
 }
@@ -376,8 +374,7 @@ auto remote_host::total_ram_size() const noexcept
     return {-1};
 }
 //------------------------------------------------------------------------------
-auto remote_host::free_ram_size() const noexcept
-  -> valid_if_positive<span_size_t> {
+auto remote_host::free_ram_size() const noexcept -> valid_if_positive<span_size_t> {
     if(auto impl{_impl()}) {
         return {impl->free_ram_size.value()};
     }
@@ -469,8 +466,7 @@ inline auto remote_node::_impl() const noexcept
     return _pimpl.ref();
 }
 //------------------------------------------------------------------------------
-inline auto remote_node::_impl() noexcept
-  -> optional_reference<remote_node_impl> {
+inline auto remote_node::_impl() noexcept -> optional_reference<remote_node_impl> {
     return _pimpl.ensure();
 }
 //------------------------------------------------------------------------------
@@ -499,16 +495,14 @@ auto remote_node::has_endpoint_info() const noexcept -> bool {
     return false;
 }
 //------------------------------------------------------------------------------
-auto remote_node::display_name() const noexcept
-  -> valid_if_not_empty<string_view> {
+auto remote_node::display_name() const noexcept -> valid_if_not_empty<string_view> {
     if(auto impl{_impl()}) {
         return impl->display_name;
     }
     return {};
 }
 //------------------------------------------------------------------------------
-auto remote_node::description() const noexcept
-  -> valid_if_not_empty<string_view> {
+auto remote_node::description() const noexcept -> valid_if_not_empty<string_view> {
     if(auto impl{_impl()}) {
         return impl->description;
     }
@@ -630,8 +624,7 @@ auto remote_node::connections() const noexcept -> node_connections {
     return {_node_id, std::move(remote_ids), _tracker};
 }
 //------------------------------------------------------------------------------
-auto remote_node::subscribes_to(const message_id msg_id) const noexcept
-  -> tribool {
+auto remote_node::subscribes_to(const message_id msg_id) const noexcept -> tribool {
     if(auto impl{_impl()}) {
         return impl->get_sub(msg_id);
     }
@@ -654,8 +647,7 @@ auto remote_node::is_pingable() const noexcept -> tribool {
     return indeterminate;
 }
 //------------------------------------------------------------------------------
-void remote_node::set_ping_interval(
-  const std::chrono::milliseconds ms) noexcept {
+void remote_node::set_ping_interval(const std::chrono::milliseconds ms) noexcept {
     if(auto impl{_impl()}) {
         impl->should_ping.reset(ms, nothing);
     }
@@ -707,8 +699,7 @@ auto remote_node_state::host_state() const noexcept -> remote_host_state {
     return {};
 }
 //------------------------------------------------------------------------------
-auto remote_node_state::instance_state() const noexcept
-  -> remote_instance_state {
+auto remote_node_state::instance_state() const noexcept -> remote_instance_state {
     if(auto impl{_impl()}) {
         auto& i = *impl;
         if(i.instance_id) {
@@ -838,8 +829,7 @@ auto remote_node_state::assign(const bridge_statistics& stats) noexcept
         i.sent_messages = stats.forwarded_messages;
         i.dropped_messages = stats.dropped_messages;
         i.messages_per_second = stats.messages_per_second;
-        i.message_age =
-          std::chrono::milliseconds{stats.message_age_milliseconds};
+        i.message_age = std::chrono::milliseconds{stats.message_age_milliseconds};
         i.uptime = std::chrono::seconds{stats.uptime_seconds};
         i.changes |= remote_node_change::statistics;
     }
@@ -895,8 +885,7 @@ auto remote_node_state::should_ping() noexcept
         auto& to = impl->should_ping;
         return {
           to.is_expired(),
-          std::chrono::duration_cast<std::chrono::milliseconds>(
-            to.period() * 2)};
+          std::chrono::duration_cast<std::chrono::milliseconds>(to.period() * 2)};
     }
     return {false, {}};
 }
@@ -996,8 +985,8 @@ auto remote_host_state::set_hostname(std::string hn) noexcept
     return *this;
 }
 //------------------------------------------------------------------------------
-auto remote_host_state::set_cpu_concurrent_threads(
-  const span_size_t value) noexcept -> remote_host_state& {
+auto remote_host_state::set_cpu_concurrent_threads(const span_size_t value) noexcept
+  -> remote_host_state& {
     if(auto impl{_impl()}) {
         auto& i = *impl;
         i.cpu_concurrent_threads = value;
@@ -1131,10 +1120,8 @@ auto node_connection_state::set_kind(const connection_kind kind) noexcept
         auto& i = *impl;
         if(i.kind != kind) {
             i.kind = kind;
-            _tracker.get_node(_id1).add_change(
-              remote_node_change::connection_info);
-            _tracker.get_node(_id2).add_change(
-              remote_node_change::connection_info);
+            _tracker.get_node(_id1).add_change(remote_node_change::connection_info);
+            _tracker.get_node(_id2).add_change(remote_node_change::connection_info);
         }
     }
     return *this;
@@ -1264,8 +1251,8 @@ auto remote_node_tracker::get_instance(
     return *inst;
 }
 //------------------------------------------------------------------------------
-auto remote_node_tracker::get_instance(const process_instance_id_t instance_id)
-  const noexcept -> remote_instance_state {
+auto remote_node_tracker::get_instance(
+  const process_instance_id_t instance_id) const noexcept -> remote_instance_state {
     if(_pimpl) {
         if(const auto inst{find(_pimpl->instances, instance_id)}) {
             return *inst;

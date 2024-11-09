@@ -82,9 +82,8 @@ export enum class verification_bit : std::uint8_t {
 /// @ingroup msgbus
 export using verification_bits = bitfield<verification_bit>;
 
-export auto operator|(
-  const verification_bit l,
-  const verification_bit r) noexcept -> verification_bits {
+export auto operator|(const verification_bit l, const verification_bit r) noexcept
+  -> verification_bits {
     return {l, r};
 }
 //------------------------------------------------------------------------------
@@ -105,8 +104,7 @@ export enum class connection_addr_kind : std::uint8_t {
 /// @brief Tag template alias for specifying connection address kind.
 /// @ingroup msgbus
 export template <connection_addr_kind Kind>
-using connection_addr_kind_tag =
-  std::integral_constant<connection_addr_kind, Kind>;
+using connection_addr_kind_tag = std::integral_constant<connection_addr_kind, Kind>;
 //------------------------------------------------------------------------------
 /// @brief Message bus connection protocol.
 /// @ingroup msgbus
@@ -125,8 +123,7 @@ export enum class connection_protocol : std::uint8_t {
 /// @see stream_protocol_tag
 /// @see datagram_protocol_tag
 export template <connection_protocol Proto>
-using connection_protocol_tag =
-  std::integral_constant<connection_protocol, Proto>;
+using connection_protocol_tag = std::integral_constant<connection_protocol, Proto>;
 
 /// @brief Tag type for specifying stream connection protocols.
 /// @ingroup msgbus
@@ -258,8 +255,7 @@ export struct endpoint_info {
     bool is_bridge_node{false};
 
     auto tie() const noexcept {
-        return std::tie(
-          display_name, description, is_router_node, is_bridge_node);
+        return std::tie(display_name, description, is_router_node, is_bridge_node);
     }
 
     auto operator!=(const endpoint_info& r) const noexcept -> bool {
@@ -611,12 +607,7 @@ export template <>
 struct data_member_traits<msgbus::connection_statistics> {
     static constexpr auto mapping() noexcept {
         using S = msgbus::connection_statistics;
-        return make_data_member_mapping<
-          S,
-          endpoint_id_t,
-          endpoint_id_t,
-          float,
-          float>(
+        return make_data_member_mapping<S, endpoint_id_t, endpoint_id_t, float, float>(
           {"local_id", &S::local_id},
           {"remote_id", &S::remote_id},
           {"block_usage_ratio", &S::block_usage_ratio},

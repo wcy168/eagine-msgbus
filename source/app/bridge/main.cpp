@@ -74,12 +74,10 @@ public:
 private:
     timeout _shutdown_timeout{
       cfg_init("msgbus.bridge.shutdown.delay", std::chrono::seconds(30))};
-    const std::chrono::milliseconds _shutdown_max_age{cfg_init(
-      "msgbus.bridge.shutdown.max_age",
-      std::chrono::milliseconds(2500))};
+    const std::chrono::milliseconds _shutdown_max_age{
+      cfg_init("msgbus.bridge.shutdown.max_age", std::chrono::milliseconds(2500))};
     const bool _shutdown_ignore{cfg_init("msgbus.bridge.keep_running", false)};
-    const bool _shutdown_verify{
-      cfg_init("msgbus.bridge.shutdown.verify", true)};
+    const bool _shutdown_verify{cfg_init("msgbus.bridge.shutdown.verify", true)};
     bool _do_shutdown{false};
 
     auto _shutdown_verified(const verification_bits v) const noexcept -> bool {
@@ -90,9 +88,7 @@ private:
           verification_bit::message_id);
     }
 
-    void on_shutdown(
-      const result_context&,
-      const shutdown_request& req) noexcept {
+    void on_shutdown(const result_context&, const shutdown_request& req) noexcept {
         log_info("received ${age} old shutdown request from ${source}")
           .arg("age", req.age)
           .arg("source", req.source_id)

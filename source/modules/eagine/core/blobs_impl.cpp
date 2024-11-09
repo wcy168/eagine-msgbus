@@ -86,9 +86,8 @@ public:
         return false;
     }
 
-    auto check_stored(
-      const span_size_t offs,
-      const memory::const_block blk) noexcept -> bool final {
+    auto check_stored(const span_size_t offs, const memory::const_block blk) noexcept
+      -> bool final {
         return are_equal(head(skip(view(_buf), offs), blk.size()), blk);
     }
 
@@ -142,10 +141,7 @@ private:
       const memory::span<const memory::const_block> data,
       const blob_info& info) const noexcept {
         _signals.blob_stream_data_appended(
-          {.request_id = _blob_id,
-           .offset = offset,
-           .data = data,
-           .info = info});
+          {.request_id = _blob_id, .offset = offset, .data = data, .info = info});
     }
 
     void _append_one(
@@ -412,8 +408,7 @@ auto pending_blob::received_everything() const noexcept -> bool {
     auto& done = done_parts();
     if(done.size() == 1) {
         const auto [bgn, end] = done.front();
-        return (bgn == 0) and (info.total_size != 0) and
-               (end >= info.total_size);
+        return (bgn == 0) and (info.total_size != 0) and (end >= info.total_size);
     }
     return (info.total_size != 0) and done.empty();
 }
@@ -479,8 +474,7 @@ auto pending_blob::merge_fragment(
                     new_done = true;
                 }
                 result &= check(
-                  src_bgn,
-                  head(skip(fragment, src_bgn - bgn), src_end - src_bgn));
+                  src_bgn, head(skip(fragment, src_bgn - bgn), src_end - src_bgn));
             }
         } else if(bgn <= src_end) {
             if(end <= src_end) {
@@ -658,11 +652,11 @@ auto blob_manipulator::update(
         auto& done = pending.done_parts();
         if(not done.empty()) {
             if(now - pending.latest_update > std::chrono::milliseconds{250}) {
-                const auto [bgn, end]{_done_begin_end(
-                  done, pending.info.total_size, max_message_size)};
+                const auto [bgn, end]{
+                  _done_begin_end(done, pending.info.total_size, max_message_size)};
 
-                const std::tuple<identifier_t, std::uint64_t, std::uint64_t>
-                  params{pending.source_blob_id, bgn, end};
+                const std::tuple<identifier_t, std::uint64_t, std::uint64_t> params{
+                  pending.source_blob_id, bgn, end};
                 auto buffer{default_serialize_buffer_for(params)};
                 const auto serialized{default_serialize(params, cover(buffer))};
                 assert(serialized);
@@ -770,8 +764,7 @@ auto blob_manipulator::push_incoming_fragment(
         if(not pending.total_size_mismatch(integer(total_size))) [[likely]] {
             if(pending.msg_id == msg_id) [[likely]] {
                 pending.max_time.reset();
-                pending.info.priority =
-                  std::max(pending.info.priority, priority);
+                pending.info.priority = std::max(pending.info.priority, priority);
                 pending.info.total_size = std::max(
                   pending.info.total_size, limit_cast<span_size_t>(total_size));
                 if(pending.merge_fragment(integer(offset), fragment)) {
@@ -943,8 +936,8 @@ auto blob_manipulator::process_prepare(const message_view& message) noexcept
     return true;
 }
 //------------------------------------------------------------------------------
-auto blob_manipulator::cancel_incoming(
-  const endpoint_id_t target_blob_id) noexcept -> bool {
+auto blob_manipulator::cancel_incoming(const endpoint_id_t target_blob_id) noexcept
+  -> bool {
     const auto pos{std::find_if(
       _incoming.begin(), _incoming.end(), [target_blob_id](auto& pending) {
           return pending.target_blob_id == target_blob_id;
@@ -984,8 +977,7 @@ inline auto blob_manipulator::_scratch_block(const span_size_t size) noexcept
 }
 //------------------------------------------------------------------------------
 auto blob_manipulator::_next_blob_id() noexcept -> blob_id_t {
-    if(_blob_id_sequence == std::numeric_limits<blob_id_t>::max())
-      [[unlikely]] {
+    if(_blob_id_sequence == std::numeric_limits<blob_id_t>::max()) [[unlikely]] {
         _blob_id_sequence = 0;
     }
     return ++_blob_id_sequence;
@@ -1085,8 +1077,7 @@ auto blob_manipulator::_process_finished_outgoing(
       limit_cast<std::int64_t>(pending.info.total_size),
       static_cast<blob_options_t>(pending.info.options))};
 
-    block_data_sink sink(
-      _scratch_block(_message_size(pending, max_message_size)));
+    block_data_sink sink(_scratch_block(_message_size(pending, max_message_size)));
     default_serializer_backend backend(sink);
 
     if(const auto serialized{serialize(header, backend)}) {

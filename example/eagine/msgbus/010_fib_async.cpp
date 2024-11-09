@@ -24,10 +24,7 @@ protected:
         Base::add_methods();
         Base::add_method(
           this,
-          message_map<
-            "Fibonacci",
-            "Calculate",
-            &fibonacci_server_impl::calculate>{});
+          message_map<"Fibonacci", "Calculate", &fibonacci_server_impl::calculate>{});
         _workers.populate();
     }
 
@@ -39,11 +36,8 @@ private:
         return arg <= 2 ? 1 : fib(arg - 2) + fib(arg - 1);
     }
 
-    auto calculate(
-      const message_context&,
-      const stored_message& msg_in) noexcept {
-        _calc_skeleton.enqueue(
-          msg_in, {"Fibonacci", "Result"}, {&fib}, _workers);
+    auto calculate(const message_context&, const stored_message& msg_in) noexcept {
+        _calc_skeleton.enqueue(msg_in, {"Fibonacci", "Result"}, {&fib}, _workers);
         return true;
     }
 
@@ -77,8 +71,7 @@ private:
 
 public:
     auto fib(const std::int64_t arg) -> future<std::int64_t> {
-        return _calc_invoker.invoke(
-          bus_node(), {"Fibonacci", "Calculate"}, arg);
+        return _calc_invoker.invoke(bus_node(), {"Fibonacci", "Calculate"}, arg);
     }
 
     auto is_done() const -> bool {
@@ -134,4 +127,3 @@ auto main(main_ctx& ctx) -> int {
 auto main(int argc, const char** argv) -> int {
     return eagine::default_main(argc, argv, eagine::main);
 }
-

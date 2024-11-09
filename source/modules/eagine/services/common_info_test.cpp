@@ -20,10 +20,12 @@ void common_info_1(auto& s) {
     auto& ctx{s.context()};
     eagine::msgbus::registry the_reg{ctx};
 
-    auto& provider = the_reg.emplace<eagine::msgbus::service_composition<
-      eagine::msgbus::common_info_providers<>>>("Provider");
-    auto& consumer = the_reg.emplace<eagine::msgbus::service_composition<
-      eagine::msgbus::common_info_consumers<>>>("Consumer");
+    auto& provider = the_reg.emplace<
+      eagine::msgbus::service_composition<eagine::msgbus::common_info_providers<>>>(
+      "Provider");
+    auto& consumer = the_reg.emplace<
+      eagine::msgbus::service_composition<eagine::msgbus::common_info_consumers<>>>(
+      "Consumer");
 
     if(the_reg.wait_for_id_of(std::chrono::seconds{30}, provider, consumer)) {
         provider.provided_endpoint_info().display_name = "test provider";
@@ -41,15 +43,14 @@ void common_info_1(auto& s) {
         }};
 
         // compiler info
-        const auto handle_compiler_info{
-          [&](
-            const eagine::msgbus::result_context& rc,
-            const eagine::compiler_info& info) {
-              has_compiler_info =
-                info.name().has_value() or info.architecture_name().has_value();
-              test.check(provider.get_id() == rc.source_id(), "from provider");
-              trck.checkpoint(1);
-          }};
+        const auto handle_compiler_info{[&](
+                                          const eagine::msgbus::result_context& rc,
+                                          const eagine::compiler_info& info) {
+            has_compiler_info =
+              info.name().has_value() or info.architecture_name().has_value();
+            test.check(provider.get_id() == rc.source_id(), "from provider");
+            trck.checkpoint(1);
+        }};
 
         consumer.compiler_info_received.connect(
           {eagine::construct_from, handle_compiler_info});
@@ -116,8 +117,7 @@ void common_info_1(auto& s) {
                     consumer.query_compiler_info(provider.get_id().value());
                 }
                 if(not has_build_version_info) {
-                    consumer.query_build_version_info(
-                      provider.get_id().value());
+                    consumer.query_build_version_info(provider.get_id().value());
                 }
                 if(not has_host_info) {
                     consumer.query_hostname(provider.get_id().value());

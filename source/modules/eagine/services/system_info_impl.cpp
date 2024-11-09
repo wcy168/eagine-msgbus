@@ -23,8 +23,7 @@ public:
     void add_methods(subscriber& base) noexcept final;
 
 private:
-    default_function_skeleton<std::chrono::duration<float>() noexcept, 32>
-      _uptime;
+    default_function_skeleton<std::chrono::duration<float>() noexcept, 32> _uptime;
 
     default_function_skeleton<valid_if_positive<span_size_t>() noexcept, 32>
       _cpu_concurrent_threads;
@@ -57,8 +56,7 @@ private:
       64>
       _temperature_min_max;
 
-    default_function_skeleton<power_supply_kind() noexcept, 32>
-      _power_supply_kind;
+    default_function_skeleton<power_supply_kind() noexcept, 32> _power_supply_kind;
 
     auto _handle_stats_query(
       const message_context& msg_ctx,
@@ -112,19 +110,17 @@ void system_info_provider_impl::add_methods(subscriber& base) noexcept {
         member_function_constant_t<&system_info::short_average_load>{})
         .map_invoke_by({"eagiSysInf", "rqShrtLoad"}));
 
-    base.add_method(
-      _long_average_load(
-        {"eagiSysInf", "longLoad"},
-        &main_ctx::get().system(),
-        member_function_constant_t<&system_info::long_average_load>{})
-        .map_invoke_by({"eagiSysInf", "rqLongLoad"}));
+    base.add_method(_long_average_load(
+                      {"eagiSysInf", "longLoad"},
+                      &main_ctx::get().system(),
+                      member_function_constant_t<&system_info::long_average_load>{})
+                      .map_invoke_by({"eagiSysInf", "rqLongLoad"}));
 
-    base.add_method(
-      _memory_page_size(
-        {"eagiSysInf", "memPageSz"},
-        &main_ctx::get().system(),
-        member_function_constant_t<&system_info::memory_page_size>{})
-        .map_invoke_by({"eagiSysInf", "rqMemPgSz"}));
+    base.add_method(_memory_page_size(
+                      {"eagiSysInf", "memPageSz"},
+                      &main_ctx::get().system(),
+                      member_function_constant_t<&system_info::memory_page_size>{})
+                      .map_invoke_by({"eagiSysInf", "rqMemPgSz"}));
 
     base.add_method(_free_ram_size(
                       {"eagiSysInf", "freeRamSz"},
@@ -132,26 +128,23 @@ void system_info_provider_impl::add_methods(subscriber& base) noexcept {
                       member_function_constant_t<&system_info::free_ram_size>{})
                       .map_invoke_by({"eagiSysInf", "rqFreRamSz"}));
 
-    base.add_method(
-      _total_ram_size(
-        {"eagiSysInf", "totalRamSz"},
-        &main_ctx::get().system(),
-        member_function_constant_t<&system_info::total_ram_size>{})
-        .map_invoke_by({"eagiSysInf", "rqTtlRamSz"}));
+    base.add_method(_total_ram_size(
+                      {"eagiSysInf", "totalRamSz"},
+                      &main_ctx::get().system(),
+                      member_function_constant_t<&system_info::total_ram_size>{})
+                      .map_invoke_by({"eagiSysInf", "rqTtlRamSz"}));
 
-    base.add_method(
-      _free_swap_size(
-        {"eagiSysInf", "freeSwpSz"},
-        &main_ctx::get().system(),
-        member_function_constant_t<&system_info::free_swap_size>{})
-        .map_invoke_by({"eagiSysInf", "rqFreSwpSz"}));
+    base.add_method(_free_swap_size(
+                      {"eagiSysInf", "freeSwpSz"},
+                      &main_ctx::get().system(),
+                      member_function_constant_t<&system_info::free_swap_size>{})
+                      .map_invoke_by({"eagiSysInf", "rqFreSwpSz"}));
 
-    base.add_method(
-      _total_swap_size(
-        {"eagiSysInf", "totalSwpSz"},
-        &main_ctx::get().system(),
-        member_function_constant_t<&system_info::total_swap_size>{})
-        .map_invoke_by({"eagiSysInf", "rqTtlSwpSz"}));
+    base.add_method(_total_swap_size(
+                      {"eagiSysInf", "totalSwpSz"},
+                      &main_ctx::get().system(),
+                      member_function_constant_t<&system_info::total_swap_size>{})
+                      .map_invoke_by({"eagiSysInf", "rqTtlSwpSz"}));
 
     base.add_method(
       _temperature_min_max(
@@ -201,8 +194,7 @@ public:
     void query_cpu_concurrent_threads(
       const endpoint_id_t endpoint_id) noexcept final;
 
-    void query_short_average_load(
-      const endpoint_id_t endpoint_id) noexcept final;
+    void query_short_average_load(const endpoint_id_t endpoint_id) noexcept final;
 
     void query_long_average_load(const endpoint_id_t endpoint_id) noexcept final;
 
@@ -228,8 +220,7 @@ public:
     system_info_consumer_signals& signals;
 
 private:
-    default_callback_invoker<std::chrono::duration<float>() noexcept, 32>
-      _uptime;
+    default_callback_invoker<std::chrono::duration<float>() noexcept, 32> _uptime;
 
     default_callback_invoker<valid_if_positive<span_size_t>() noexcept, 32>
       _cpu_concurrent_threads;
@@ -262,17 +253,15 @@ private:
       64>
       _temperature_min_max;
 
-    default_callback_invoker<power_supply_kind() noexcept, 32>
-      _power_supply_kind;
+    default_callback_invoker<power_supply_kind() noexcept, 32> _power_supply_kind;
 };
 //------------------------------------------------------------------------------
 void system_info_consumer_impl::add_methods(subscriber& base) noexcept {
     base.add_method(
       _uptime(signals.uptime_received).map_fulfill_by({"eagiSysInf", "uptime"}));
 
-    base.add_method(
-      _cpu_concurrent_threads(signals.cpu_concurrent_threads_received)
-        .map_fulfill_by({"eagiSysInf", "cpuThreads"}));
+    base.add_method(_cpu_concurrent_threads(signals.cpu_concurrent_threads_received)
+                      .map_fulfill_by({"eagiSysInf", "cpuThreads"}));
 
     base.add_method(_short_average_load(signals.short_average_load_received)
                       .map_fulfill_by({"eagiSysInf", "shortLoad"}));
@@ -385,8 +374,7 @@ void system_info_consumer_impl::query_sensors(
 //------------------------------------------------------------------------------
 auto make_system_info_consumer_impl(
   subscriber& base,
-  system_info_consumer_signals& sigs)
-  -> unique_holder<system_info_consumer_intf> {
+  system_info_consumer_signals& sigs) -> unique_holder<system_info_consumer_intf> {
     return {hold<system_info_consumer_impl>, base, sigs};
 }
 //------------------------------------------------------------------------------

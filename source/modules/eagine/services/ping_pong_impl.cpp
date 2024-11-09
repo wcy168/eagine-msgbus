@@ -36,8 +36,7 @@ public:
 
     auto decode_ping_response(
       const message_context& msg_ctx,
-      const stored_message& message) noexcept
-      -> std::optional<ping_response> final;
+      const stored_message& message) noexcept -> std::optional<ping_response> final;
 
     auto update() noexcept -> work_done final;
 
@@ -53,8 +52,7 @@ private:
     subscriber& base;
     pinger_signals& signals;
 
-    std::vector<std::tuple<endpoint_id_t, message_sequence_t, timeout>>
-      _pending{};
+    std::vector<std::tuple<endpoint_id_t, message_sequence_t, timeout>> _pending{};
 };
 //------------------------------------------------------------------------------
 auto pinger_impl::_handle_pong(
@@ -96,8 +94,8 @@ auto pinger_impl::decode_ping_response(
   const message_context& msg_ctx,
   const stored_message& message) noexcept -> std::optional<ping_response> {
     if(msg_ctx.is_special_message("pong")) {
-        const auto pos{std::find_if(
-          _pending.begin(), _pending.end(), [&](const auto& entry) {
+        const auto pos{
+          std::find_if(_pending.begin(), _pending.end(), [&](const auto& entry) {
               const auto& [pingable_id, sequence_no, ping_time] = entry;
               const bool is_response = (message.source_id == pingable_id) and
                                        (message.sequence_no == sequence_no);

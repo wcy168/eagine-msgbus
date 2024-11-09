@@ -34,8 +34,7 @@ private:
     void _handle_board_timeout(const sudoku_board_timeout& info) noexcept;
 
     bool _block_cells{cfg_init("msgbus.sudoku.solver.block_cells", false)};
-    bool _print_progress{
-      cfg_init("msgbus.sudoku.solver.print_progress", false)};
+    bool _print_progress{cfg_init("msgbus.sudoku.solver.print_progress", false)};
     bool _print_incomplete{
       cfg_init("msgbus.sudoku.solver.print_incomplete", false)};
 
@@ -43,10 +42,7 @@ private:
 };
 //------------------------------------------------------------------------------
 sudoku_tiling_node::sudoku_tiling_node(main_ctx_parent parent)
-  : service_node<sudoku_tiling_base> {
-    "TilingNode", parent
-}
-{
+  : service_node<sudoku_tiling_base>{"TilingNode", parent} {
     declare_state("running", "tlngStart", "tlngFinish");
     declare_state("suspended", "suspndSend", "rsumedSend");
     connect<&sudoku_tiling_node::_handle_generated<3>>(this, tiles_generated_3);
@@ -90,9 +86,8 @@ void sudoku_tiling_node::_handle_generated(
     }
     std::string file_path;
     if(
-      tiles.are_complete() and
-      main_context().config().fetch(
-        "msgbus.sudoku.solver.output_path", file_path)) {
+      tiles.are_complete() and main_context().config().fetch(
+                                 "msgbus.sudoku.solver.output_path", file_path)) {
         std::ofstream fout{file_path};
         tiles.print(fout) << std::endl;
     }
@@ -171,8 +166,7 @@ auto main(main_ctx& ctx) -> int {
 
     resetting_timeout log_contribution_timeout{
       ctx.config()
-        .get<std::chrono::seconds>(
-          "msgbus.sudoku.solver.log_contribution_timeout")
+        .get<std::chrono::seconds>("msgbus.sudoku.solver.log_contribution_timeout")
         .value_or(std::chrono::minutes{5})};
 
     tiling_generator.log_start();

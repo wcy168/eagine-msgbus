@@ -31,9 +31,7 @@ public:
         connect<&subscription_logger::on_shutdown>(this, shutdown_requested);
     }
 
-    void is_alive(
-      const result_context&,
-      const subscriber_alive& alive) noexcept {
+    void is_alive(const result_context&, const subscriber_alive& alive) noexcept {
         log_info("endpoint ${subscrbr} is alive")
           .arg("subscrbr", alive.source.endpoint_id);
     }
@@ -55,9 +53,7 @@ public:
           .arg("message", sub.message_type);
     }
 
-    void on_shutdown(
-      const result_context&,
-      const shutdown_request& req) noexcept {
+    void on_shutdown(const result_context&, const shutdown_request& req) noexcept {
         log_info("received ${age} old shutdown request from ${subscrbr}")
           .arg("age", req.age)
           .arg("subscrbr", req.source_id)
@@ -105,4 +101,3 @@ auto main(main_ctx& ctx) -> int {
 auto main(int argc, const char** argv) -> int {
     return eagine::default_main(argc, argv, eagine::main);
 }
-

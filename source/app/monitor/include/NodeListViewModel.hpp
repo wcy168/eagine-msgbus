@@ -114,8 +114,7 @@ private:
         eagine::flat_map<eagine::host_id_t, HostInfo> hosts;
         eagine::flat_map<eagine::identifier_t, eagine::process_instance_id_t>
           node2Inst;
-        eagine::flat_map<eagine::process_instance_id_t, eagine::host_id_t>
-          inst2Host;
+        eagine::flat_map<eagine::process_instance_id_t, eagine::host_id_t> inst2Host;
 
         eagine::host_id_t selectedHostId{0U};
         eagine::process_instance_id_t selectedInstId{0U};
@@ -127,22 +126,19 @@ private:
         auto forHost(eagine::host_id_t hostId, Function function) const -> bool;
 
         template <typename Function>
-        auto forInst(eagine::process_instance_id_t instId, Function function)
-          const -> bool;
+        auto forInst(eagine::process_instance_id_t instId, Function function) const
+          -> bool;
 
         template <typename Function>
-        auto forNode(eagine::identifier_t nodeId, Function function) const
-          -> bool;
+        auto forNode(eagine::identifier_t nodeId, Function function) const -> bool;
 
         auto updateSelection() noexcept -> bool;
 
         auto rowOf(eagine::identifier_t) const noexcept -> int;
         auto rowOf(eagine::identifier_t, eagine::identifier_t) const noexcept
           -> int;
-        auto rowOf(
-          eagine::identifier_t,
-          eagine::identifier_t,
-          eagine::identifier_t) const noexcept -> int;
+        auto rowOf(eagine::identifier_t, eagine::identifier_t, eagine::identifier_t)
+          const noexcept -> int;
 
         auto findSelectedRow() const noexcept -> int;
 

@@ -13,8 +13,8 @@ import std;
 namespace eagine {
 namespace msgbus {
 //------------------------------------------------------------------------------
-using tracker_base = service_composition<
-  require_services<subscriber, node_tracker, shutdown_invoker>>;
+using tracker_base =
+  service_composition<require_services<subscriber, node_tracker, shutdown_invoker>>;
 
 class tracker_example
   : public main_ctx_object
@@ -28,11 +28,10 @@ public:
         object_description("Node tracker", "Node tracker example");
         connect<&tracker_example::on_node_change>(this, this->node_changed);
 
-        scheduler().schedule_repeated(
-          "checkup", std::chrono::seconds{5}, [this] {
-              checkup();
-              return true;
-          });
+        scheduler().schedule_repeated("checkup", std::chrono::seconds{5}, [this] {
+            checkup();
+            return true;
+        });
     }
 
     void on_node_change(

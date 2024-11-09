@@ -30,12 +30,9 @@ class SelectedItemViewModel
     Q_PROPERTY(QUrl instViewUrl READ getInstViewUrl NOTIFY itemSelectionChanged)
     Q_PROPERTY(QUrl nodeViewUrl READ getNodeViewUrl NOTIFY itemSelectionChanged)
 
-    Q_PROPERTY(
-      HostViewModel* host READ getHostViewModel NOTIFY itemSelectionChanged)
-    Q_PROPERTY(
-      InstViewModel* inst READ getInstViewModel NOTIFY itemSelectionChanged)
-    Q_PROPERTY(
-      NodeViewModel* node READ getNodeViewModel NOTIFY itemSelectionChanged)
+    Q_PROPERTY(HostViewModel* host READ getHostViewModel NOTIFY itemSelectionChanged)
+    Q_PROPERTY(InstViewModel* inst READ getInstViewModel NOTIFY itemSelectionChanged)
+    Q_PROPERTY(NodeViewModel* node READ getNodeViewModel NOTIFY itemSelectionChanged)
 public:
     SelectedItemViewModel(MonitorBackend&, NodeListViewModel&);
 

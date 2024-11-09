@@ -21,8 +21,7 @@ class NodeParameterViewModel
   , public eagine::main_ctx_object {
     Q_OBJECT
 
-    Q_PROPERTY(
-      QAbstractItemModel* pingSuccessRate READ getPingSuccessRate CONSTANT)
+    Q_PROPERTY(QAbstractItemModel* pingSuccessRate READ getPingSuccessRate CONSTANT)
 public:
     NodeParameterViewModel(MonitorBackend&);
 

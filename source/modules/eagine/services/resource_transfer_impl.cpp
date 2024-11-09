@@ -223,8 +223,7 @@ public:
         return _blobs.has_outgoing() or base.bus_node().has_outgoing_blobs();
     }
 
-    void average_message_age(
-      const std::chrono::microseconds age) noexcept final {
+    void average_message_age(const std::chrono::microseconds age) noexcept final {
         _should_send_outgoing.set_duration(std::min(
           std::chrono::microseconds{50} + age / 16,
           std::chrono::microseconds{50000}));
@@ -239,21 +238,16 @@ public:
     auto is_contained(const std::filesystem::path& file_path) const noexcept
       -> bool;
 
-    auto get_file_path(const url& locator) const noexcept
-      -> std::filesystem::path;
+    auto get_file_path(const url& locator) const noexcept -> std::filesystem::path;
 
-    auto has_resource(const message_context&, const url& locator) noexcept
-      -> bool;
+    auto has_resource(const message_context&, const url& locator) noexcept -> bool;
 
     auto get_resource(
       const message_context& ctx,
       const url& locator,
       const endpoint_id_t endpoint_id,
-      const message_priority priority)
-      -> std::tuple<
-        shared_holder<source_blob_io>,
-        std::chrono::seconds,
-        message_priority>;
+      const message_priority priority) -> std::
+      tuple<shared_holder<source_blob_io>, std::chrono::seconds, message_priority>;
 
 private:
     auto _handle_has_resource_query(
@@ -400,8 +394,7 @@ auto resource_server_impl::get_resource(
             if(const auto count{locator.argument("count")}) {
                 if(const auto bytes{from_string<span_size_t>(*count)}) {
                     if(locator.has_path("/random")) {
-                        read_io.emplace_derived(
-                          hold<random_byte_blob_io>, *bytes);
+                        read_io.emplace_derived(hold<random_byte_blob_io>, *bytes);
                     } else if(locator.has_path("/zeroes")) {
                         read_io.emplace_derived(
                           hold<single_byte_blob_io>, *bytes, 0x0U);
@@ -437,9 +430,8 @@ auto resource_server_impl::get_resource(
     }
 
     const auto max_time =
-      read_io
-        ? driver.get_blob_timeout(endpoint_id, locator, read_io->total_size())
-        : std::chrono::seconds{};
+      read_io ? driver.get_blob_timeout(endpoint_id, locator, read_io->total_size())
+              : std::chrono::seconds{};
 
     return {
       std::move(read_io),
@@ -456,13 +448,11 @@ auto resource_server_impl::_handle_has_resource_query(
         if(has_resource(ctx, locator)) {
             message_view response{message.content()};
             response.setup_response(message);
-            ctx.bus_node().post(
-              message_id{"eagiRsrces", "hasResurce"}, response);
+            ctx.bus_node().post(message_id{"eagiRsrces", "hasResurce"}, response);
         } else {
             message_view response{message.content()};
             response.setup_response(message);
-            ctx.bus_node().post(
-              message_id{"eagiRsrces", "hasNotRsrc"}, response);
+            ctx.bus_node().post(message_id{"eagiRsrces", "hasNotRsrc"}, response);
         }
     }
     return true;
@@ -912,8 +902,7 @@ auto resource_manipulator_impl::query_resource_content(
 //------------------------------------------------------------------------------
 auto make_resource_manipulator_impl(
   subscriber& base,
-  resource_manipulator_signals& sigs)
-  -> unique_holder<resource_manipulator_intf> {
+  resource_manipulator_signals& sigs) -> unique_holder<resource_manipulator_intf> {
     return {hold<resource_manipulator_impl>, base, sigs};
 }
 //------------------------------------------------------------------------------

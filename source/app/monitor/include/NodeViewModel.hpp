@@ -27,15 +27,12 @@ class NodeViewModel
     Q_PROPERTY(QVariant description READ getDescription NOTIFY infoChanged)
     Q_PROPERTY(QVariant uptime READ getUptime NOTIFY infoChanged)
     Q_PROPERTY(QVariant sentMessages READ getSentMessages NOTIFY infoChanged)
-    Q_PROPERTY(
-      QVariant receivedMessages READ getReceivedMessages NOTIFY infoChanged)
-    Q_PROPERTY(
-      QVariant droppedMessages READ getDroppedMessages NOTIFY infoChanged)
+    Q_PROPERTY(QVariant receivedMessages READ getReceivedMessages NOTIFY infoChanged)
+    Q_PROPERTY(QVariant droppedMessages READ getDroppedMessages NOTIFY infoChanged)
     Q_PROPERTY(
       QVariant messagesPerSecond READ getMessagesPerSecond NOTIFY infoChanged)
 
-    Q_PROPERTY(
-      QVariant pingSuccessRate READ getPingSuccessRate NOTIFY infoChanged)
+    Q_PROPERTY(QVariant pingSuccessRate READ getPingSuccessRate NOTIFY infoChanged)
 
     Q_PROPERTY(QAbstractItemModel* parameters READ getParameters CONSTANT)
 

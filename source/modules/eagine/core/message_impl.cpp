@@ -70,8 +70,7 @@ auto stored_message::store_and_sign(
                 const auto cleanup{ssl.delete_message_digest.raii(md_ctx)};
 
                 if(ctx.message_digest_sign_init(md_ctx, md_type)) [[likely]] {
-                    if(ssl.message_digest_sign_update(md_ctx, data))
-                      [[likely]] {
+                    if(ssl.message_digest_sign_update(md_ctx, data)) [[likely]] {
 
                         auto free{skip(storage(), used.size())};
                         if(const ok sig{
@@ -118,8 +117,8 @@ auto message_storage::fetch_all(const fetch_handler handler) noexcept -> bool {
     bool fetched_some{false};
     bool clear_all{true};
     for(auto& [msg_id, message, insert_time] : _messages) {
-        const auto msg_age{std::chrono::duration_cast<message_age>(
-          _clock_t::now() - insert_time)};
+        const auto msg_age{
+          std::chrono::duration_cast<message_age>(_clock_t::now() - insert_time)};
         if(handler(msg_id, msg_age, message)) {
             _buffers.eat(message.release_buffer());
             message.mark_too_old();
@@ -131,9 +130,8 @@ auto message_storage::fetch_all(const fetch_handler handler) noexcept -> bool {
     if(clear_all) {
         _messages.clear();
     } else {
-        std::erase_if(_messages, [](const auto& t) {
-            return std::get<1>(t).too_many_hops();
-        });
+        std::erase_if(
+          _messages, [](const auto& t) { return std::get<1>(t).too_many_hops(); });
     }
     return fetched_some;
 }
@@ -175,9 +173,8 @@ auto serialized_message_storage::fetch_all(const fetch_handler handler) noexcept
     if(clear_all) [[likely]] {
         _messages.clear();
     } else {
-        std::erase_if(_messages, [](const auto& entry) {
-            return std::get<0>(entry).empty();
-        });
+        std::erase_if(
+          _messages, [](const auto& entry) { return std::get<0>(entry).empty(); });
     }
     return fetched_some;
 }
@@ -240,8 +237,8 @@ auto serialized_message_storage::pack_into(memory::block dest) noexcept
         if(packing.is_full()) {
             break;
         }
-        if(const auto packed{
-             store_data_with_size(view(message), packing.dest())}) [[likely]] {
+        if(const auto packed{store_data_with_size(view(message), packing.dest())})
+          [[likely]] {
             packing.add(packed.size(), priority);
         }
         packing.next();
@@ -251,8 +248,7 @@ auto serialized_message_storage::pack_into(memory::block dest) noexcept
     return packing.info();
 }
 //------------------------------------------------------------------------------
-void serialized_message_storage::cleanup(
-  const message_pack_info& packed) noexcept {
+void serialized_message_storage::cleanup(const message_pack_info& packed) noexcept {
     auto to_be_removed{packed.bits()};
 
     if(to_be_removed) {
@@ -265,9 +261,8 @@ void serialized_message_storage::cleanup(
             ++i;
             to_be_removed >>= 1U;
         }
-        std::erase_if(_messages, [](const auto& entry) {
-            return std::get<0>(entry).empty();
-        });
+        std::erase_if(
+          _messages, [](const auto& entry) { return std::get<0>(entry).empty(); });
     }
 }
 //------------------------------------------------------------------------------
@@ -301,9 +296,8 @@ auto message_priority_queue::process_all(
     if(clear_all) {
         _messages.clear();
     } else {
-        result = std::erase_if(_messages, [](const auto& message) {
-            return message.too_many_hops();
-        });
+        result = std::erase_if(
+          _messages, [](const auto& message) { return message.too_many_hops(); });
     }
     return span_size(result);
 }

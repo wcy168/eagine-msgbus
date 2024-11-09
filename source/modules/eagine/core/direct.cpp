@@ -180,8 +180,7 @@ public:
 /// @see direct_acceptor
 /// @see direct_connection_factory
 export template <typename Lockable>
-class direct_client_connection final
-  : public direct_connection_info<connection> {
+class direct_client_connection final : public direct_connection_info<connection> {
 public:
     direct_client_connection(
       const shared_holder<direct_connection_address<Lockable>>& address) noexcept
@@ -260,8 +259,7 @@ private:
 /// @see direct_acceptor
 /// @see direct_connection_factory
 export template <typename Lockable>
-class direct_server_connection final
-  : public direct_connection_info<connection> {
+class direct_server_connection final : public direct_connection_info<connection> {
 public:
     direct_server_connection(
       shared_holder<direct_connection_state<Lockable>>& state) noexcept
@@ -436,4 +434,3 @@ export auto make_direct_connection_factory(main_ctx_parent parent)
 }
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus
-

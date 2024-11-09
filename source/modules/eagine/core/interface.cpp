@@ -99,8 +99,7 @@ struct connection_user : interface<connection_user> {
 export struct acceptor : connection_info {
 
     /// @brief Alias for accepted connection handler callable reference type.
-    using accept_handler =
-      callable_ref<void(shared_holder<connection>) noexcept>;
+    using accept_handler = callable_ref<void(shared_holder<connection>) noexcept>;
 
     /// @brief Updates the internal state of the acceptor (called repeatedly).
     virtual auto update() noexcept -> work_done {

@@ -67,11 +67,9 @@ public:
 
     auto max_data_size() noexcept -> valid_if_positive<span_size_t> final;
 
-    auto send(const message_id msg_id, const message_view&) noexcept
-      -> bool final;
+    auto send(const message_id msg_id, const message_view&) noexcept -> bool final;
 
-    auto fetch_messages(const fetch_handler handler) noexcept
-      -> work_done final;
+    auto fetch_messages(const fetch_handler handler) noexcept -> work_done final;
 
     auto query_statistics(connection_statistics&) noexcept -> bool final;
 
@@ -102,24 +100,19 @@ private:
       -> std::tuple<message_id, endpoint_id_t>;
     auto _msg_id_to_subscr_topic(const message_id, endpoint_id_t, bool) noexcept
       -> string_view;
-    auto _msg_id_to_topic(const message_id, endpoint_id_t) noexcept
-      -> string_view;
+    auto _msg_id_to_topic(const message_id, endpoint_id_t) noexcept -> string_view;
     static void _message_delivered_f(void*, MQTTClient_deliveryToken);
-    static auto _message_arrived_f(void*, char*, int, MQTTClient_message*)
-      -> int;
+    static auto _message_arrived_f(void*, char*, int, MQTTClient_message*) -> int;
     static void _connection_lost_f(void*, char*);
 
-    auto _handle_req_id(const message_view&) noexcept
-      -> message_handling_result;
+    auto _handle_req_id(const message_view&) noexcept -> message_handling_result;
     auto _handle_subsc(const message_view&) noexcept -> message_handling_result;
     auto _handle_unsub(const message_view&) noexcept -> message_handling_result;
 
-    auto _handle_special_send(
-      const message_id msg_id,
-      const message_view&) noexcept -> message_handling_result;
-    auto _handle_special_recv(
-      const message_id msg_id,
-      const message_view&) noexcept -> message_handling_result;
+    auto _handle_special_send(const message_id msg_id, const message_view&) noexcept
+      -> message_handling_result;
+    auto _handle_special_recv(const message_id msg_id, const message_view&) noexcept
+      -> message_handling_result;
 
     const std::string _broker_url;
     identifier _client_uid;
@@ -140,8 +133,7 @@ auto paho_mqtt_connection::_qos() const noexcept -> int {
     return 0;
 }
 //------------------------------------------------------------------------------
-auto paho_mqtt_connection::_has_uid(const string_view uid) const noexcept
-  -> bool {
+auto paho_mqtt_connection::_has_uid(const string_view uid) const noexcept -> bool {
     return (string_view{"_"} == uid) or (_client_uid.name().view() == uid);
 }
 //------------------------------------------------------------------------------
@@ -311,9 +303,7 @@ void paho_mqtt_connection::_remove_subscription(string_view topic) noexcept {
 //------------------------------------------------------------------------------
 auto paho_mqtt_connection::_subscribe_to(string_view topic) noexcept -> bool {
     if(is_usable()) {
-        if(
-          MQTTClient_subscribe(_mqtt_client, c_str(topic), 1) ==
-          MQTTCLIENT_SUCCESS) {
+        if(MQTTClient_subscribe(_mqtt_client, c_str(topic), 1) == MQTTCLIENT_SUCCESS) {
             log_info("${client} subscribes to ${topic}")
               .arg("client", _client_uid)
               .arg("topic", topic);
@@ -323,12 +313,9 @@ auto paho_mqtt_connection::_subscribe_to(string_view topic) noexcept -> bool {
     return false;
 }
 //------------------------------------------------------------------------------
-auto paho_mqtt_connection::_unsubscribe_from(string_view topic) noexcept
-  -> bool {
+auto paho_mqtt_connection::_unsubscribe_from(string_view topic) noexcept -> bool {
     if(is_usable()) {
-        if(
-          MQTTClient_unsubscribe(_mqtt_client, c_str(topic)) ==
-          MQTTCLIENT_SUCCESS) {
+        if(MQTTClient_unsubscribe(_mqtt_client, c_str(topic)) == MQTTCLIENT_SUCCESS) {
             log_info("${client} unsubscribes from ${topic}")
               .arg("client", _client_uid)
               .arg("topic", topic);
@@ -431,18 +418,17 @@ auto paho_mqtt_connection::_do_send(
 //------------------------------------------------------------------------------
 auto paho_mqtt_connection::update() noexcept -> work_done {
     // TODO: update
-    const auto handler{[this](
-                         const message_id msg_id,
-                         const message_age,
-                         const message_view& message) {
-        block_data_sink sink(cover(_buffer));
-        default_serializer_backend backend(sink);
-        if(serialize_message(msg_id, message, backend)) [[likely]] {
-            return _do_send(
-              _msg_id_to_topic(msg_id, message.target_id), sink.done());
-        }
-        return false;
-    }};
+    const auto handler{
+      [this](
+        const message_id msg_id, const message_age, const message_view& message) {
+          block_data_sink sink(cover(_buffer));
+          default_serializer_backend backend(sink);
+          if(serialize_message(msg_id, message, backend)) [[likely]] {
+              return _do_send(
+                _msg_id_to_topic(msg_id, message.target_id), sink.done());
+          }
+          return false;
+      }};
     auto& sent{[this] -> message_storage& {
         const std::unique_lock lock{_send_mutex};
         _sent.swap();
@@ -485,12 +471,11 @@ auto paho_mqtt_connection::_handle_req_id(const message_view&) noexcept
 auto paho_mqtt_connection::_handle_subsc(const message_view& message) noexcept
   -> message_handling_result {
     message_id sub_msg_id{};
-    if(default_deserialize_message_type(sub_msg_id, message.content()))
-      [[likely]] {
+    if(default_deserialize_message_type(sub_msg_id, message.content())) [[likely]] {
         const std::unique_lock lock{_send_mutex};
         for(const auto broadcast : {true, false}) {
-            const auto topic{_msg_id_to_subscr_topic(
-              sub_msg_id, message.source_id, broadcast)};
+            const auto topic{
+              _msg_id_to_subscr_topic(sub_msg_id, message.source_id, broadcast)};
             _add_subscription(topic, _subscribe_to(topic));
         }
     }
@@ -500,12 +485,11 @@ auto paho_mqtt_connection::_handle_subsc(const message_view& message) noexcept
 auto paho_mqtt_connection::_handle_unsub(const message_view& message) noexcept
   -> message_handling_result {
     message_id sub_msg_id{};
-    if(default_deserialize_message_type(sub_msg_id, message.content()))
-      [[likely]] {
+    if(default_deserialize_message_type(sub_msg_id, message.content())) [[likely]] {
         const std::unique_lock lock{_send_mutex};
         for(const auto broadcast : {true, false}) {
-            const auto topic{_msg_id_to_subscr_topic(
-              sub_msg_id, message.source_id, broadcast)};
+            const auto topic{
+              _msg_id_to_subscr_topic(sub_msg_id, message.source_id, broadcast)};
             if(_unsubscribe_from(topic)) {
                 _remove_subscription(topic);
             }
@@ -593,8 +577,7 @@ public:
     paho_mqtt_connection_factory(main_ctx_parent parent) noexcept
       : main_ctx_object{"PahoConnFc", parent} {}
 
-    auto make_acceptor(const string_view) noexcept
-      -> shared_holder<acceptor> final;
+    auto make_acceptor(const string_view) noexcept -> shared_holder<acceptor> final;
 
     auto make_connector(const string_view addr_str) noexcept
       -> shared_holder<connection> final;
@@ -625,4 +608,3 @@ auto make_paho_mqtt_connection_factory(main_ctx_parent parent)
 }
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus
-

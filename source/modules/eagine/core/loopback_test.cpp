@@ -23,8 +23,7 @@ void loopback_addr_kind(auto& s) {
     eagine::msgbus::loopback_connection conn;
 
     test.check(
-      conn.addr_kind() == eagine::msgbus::connection_addr_kind::none,
-      "no address");
+      conn.addr_kind() == eagine::msgbus::connection_addr_kind::none, "no address");
 }
 //------------------------------------------------------------------------------
 void loopback_roundtrip(auto& s) {

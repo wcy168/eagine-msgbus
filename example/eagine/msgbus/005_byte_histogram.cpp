@@ -25,8 +25,7 @@ auto main(main_ctx& ctx) -> int {
 
             span_size_t max_count{0};
             for(auto b : msg.content()) {
-                max_count =
-                  math::maximum(max_count, ++byte_counts[std_size(b)]);
+                max_count = math::maximum(max_count, ++byte_counts[std_size(b)]);
             }
 
             ctx.log()
@@ -53,9 +52,7 @@ auto main(main_ctx& ctx) -> int {
 
     timeout idle_too_long{std::chrono::seconds{30}};
     while(not idle_too_long) {
-        if(
-          bus.update() or
-          bus.process_everything({construct_from, log_byte_hist})) {
+        if(bus.update() or bus.process_everything({construct_from, log_byte_hist})) {
             idle_too_long.reset();
         } else {
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -71,4 +68,3 @@ auto main(main_ctx& ctx) -> int {
 auto main(int argc, const char** argv) -> int {
     return eagine::default_main(argc, argv, eagine::main);
 }
-

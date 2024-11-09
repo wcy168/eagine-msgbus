@@ -32,16 +32,15 @@ void shutdown_1(auto& s) {
     eagine::msgbus::router router(ctx);
     router.add_acceptor(std::move(acceptor));
 
-    eagine::msgbus::service_composition<eagine::msgbus::shutdown_target<>>
-      target{target_ept};
-    eagine::msgbus::service_composition<eagine::msgbus::shutdown_invoker<>>
-      source_1{source_1_ept};
-    eagine::msgbus::service_composition<eagine::msgbus::shutdown_invoker<>>
-      source_2{source_2_ept};
+    eagine::msgbus::service_composition<eagine::msgbus::shutdown_target<>> target{
+      target_ept};
+    eagine::msgbus::service_composition<eagine::msgbus::shutdown_invoker<>> source_1{
+      source_1_ept};
+    eagine::msgbus::service_composition<eagine::msgbus::shutdown_invoker<>> source_2{
+      source_2_ept};
 
     while(not(
-      source_1_ept.has_id() and source_2_ept.has_id() and
-      target_ept.has_id())) {
+      source_1_ept.has_id() and source_2_ept.has_id() and target_ept.has_id())) {
         router.update();
         source_1.update_and_process_all();
         source_2.update_and_process_all();

@@ -27,8 +27,7 @@ public:
       , base{bus} {
         connect<&topology_printer::on_router_appeared>(this, router_appeared);
         connect<&topology_printer::on_bridge_appeared>(this, bridge_appeared);
-        connect<&topology_printer::on_endpoint_appeared>(
-          this, endpoint_appeared);
+        connect<&topology_printer::on_endpoint_appeared>(this, endpoint_appeared);
         connect<&topology_printer::on_shutdown>(this, shutdown_requested);
     }
 
@@ -104,9 +103,7 @@ public:
         _endpoints.emplace(info.endpoint_id);
     }
 
-    void on_shutdown(
-      const result_context&,
-      const shutdown_request& req) noexcept {
+    void on_shutdown(const result_context&, const shutdown_request& req) noexcept {
         _log.info("received ${age} old shutdown request from ${subscrbr}")
           .arg("age", req.age)
           .arg("subscrbr", req.source_id)
@@ -155,4 +152,3 @@ auto main(main_ctx& ctx) -> int {
 auto main(int argc, const char** argv) -> int {
     return eagine::default_main(argc, argv, eagine::main);
 }
-

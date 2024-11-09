@@ -72,12 +72,10 @@ private:
                 _sink.reset(buffer);
                 Serializer write_backend(_sink);
 
-                if(serialize(std::apply(func, args), write_backend))
-                  [[likely]] {
+                if(serialize(std::apply(func, args), write_backend)) [[likely]] {
                     message_view msg_out{_sink.done()};
                     msg_out.set_serializer_id(write_backend.type_id());
-                    msg_ctx.bus_node().respond_to(
-                      request, response_id, msg_out);
+                    msg_ctx.bus_node().respond_to(request, response_id, msg_out);
                 }
                 return true;
             }
@@ -212,8 +210,7 @@ public:
                 _source.reset(request.content());
                 Deserializer read_backend(_source);
 
-                if(request.has_serializer_id(read_backend.type_id()))
-                  [[likely]] {
+                if(request.has_serializer_id(read_backend.type_id())) [[likely]] {
                     auto& call = pos->second;
                     if(deserialize(call.args, read_backend)) [[likely]] {
                         call.too_late.reset(_default_timeout);
@@ -315,8 +312,7 @@ public:
                 _source.reset(request.content());
                 Deserializer read_backend(_source);
 
-                if(request.has_serializer_id(read_backend.type_id()))
-                  [[likely]] {
+                if(request.has_serializer_id(read_backend.type_id())) [[likely]] {
                     auto& call = pos->second;
                     if(deserialize(call.args, read_backend)) [[likely]] {
                         call.response_id = response_id;
@@ -378,8 +374,8 @@ private:
         argument_tuple_type args{};
         callable_ref<Signature> func{};
 
-        using result_type = std::remove_cv_t<
-          std::remove_reference_t<decltype(std::apply(func, args))>>;
+        using result_type =
+          std::remove_cv_t<std::remove_reference_t<decltype(std::apply(func, args))>>;
         result_type result{};
 
         endpoint_id_t invoker_id{};
@@ -399,4 +395,3 @@ private:
 };
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus
-

@@ -23,10 +23,8 @@ struct ping_state {
     std::chrono::microseconds min_time{std::chrono::microseconds::max()};
     std::chrono::microseconds max_time{std::chrono::microseconds::zero()};
     std::chrono::microseconds sum_time{std::chrono::microseconds::zero()};
-    std::chrono::steady_clock::time_point start{
-      std::chrono::steady_clock::now()};
-    std::chrono::steady_clock::time_point finish{
-      std::chrono::steady_clock::now()};
+    std::chrono::steady_clock::time_point start{std::chrono::steady_clock::now()};
+    std::chrono::steady_clock::time_point finish{std::chrono::steady_clock::now()};
     std::intmax_t sent{0};
     std::intmax_t responded{0};
     std::intmax_t timeouted{0};
@@ -81,8 +79,7 @@ public:
         this->object_description("Pinger", "Message bus ping");
 
         connect<&pinger_node::on_id_assigned>(this, bus_node().id_assigned);
-        connect<&pinger_node::on_connection_lost>(
-          this, bus_node().connection_lost);
+        connect<&pinger_node::on_connection_lost>(this, bus_node().connection_lost);
         connect<&pinger_node::on_connection_established>(
           this, bus_node().connection_established);
 
@@ -157,8 +154,7 @@ public:
       const result_context& res_ctx,
       const valid_if_positive<host_id_t>& host_id) noexcept {
         if(res_ctx.source_id() != this->bus_node().get_id()) {
-            host_id.and_then(
-              _1.assign_to(_targets[res_ctx.source_id()].host_id));
+            host_id.and_then(_1.assign_to(_targets[res_ctx.source_id()].host_id));
         }
     }
 
@@ -209,8 +205,7 @@ public:
     }
 
     auto is_done() const noexcept -> bool {
-        return not(
-          ((_rcvd + _tout + _mod) < _max) or this->has_pending_pings());
+        return not(((_rcvd + _tout + _mod) < _max) or this->has_pending_pings());
     }
 
     auto do_ping() -> work_done {
@@ -225,16 +220,14 @@ public:
                     if(entry.is_active) {
                         const auto balance =
                           entry.sent - entry.responded - entry.timeouted;
-                        const auto limit =
-                          _limit / span_size(_targets.size() + 1);
+                        const auto limit = _limit / span_size(_targets.size() + 1);
                         if(balance <= limit) {
                             this->ping(
                               pingable_id,
                               adjusted_duration(std::chrono::seconds(10)));
                             entry.sent++;
                             if((++_sent % _mod) == 0) [[unlikely]] {
-                                log_info("sent ${sent} pings")
-                                  .arg("sent", _sent);
+                                log_info("sent ${sent} pings").arg("sent", _sent);
                             }
 
                             if(entry.should_check_info) [[unlikely]] {
@@ -281,10 +274,7 @@ public:
               .arg("duration", info.time_interval())
               .arg("rspdRate", "Ratio", info.respond_rate(), not_avail)
               .arg(
-                "rspdPerSec",
-                "RatePerSec",
-                info.responds_per_second(),
-                not_avail);
+                "rspdPerSec", "RatePerSec", info.responds_per_second(), not_avail);
         }
     }
 

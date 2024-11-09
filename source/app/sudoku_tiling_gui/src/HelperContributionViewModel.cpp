@@ -57,8 +57,7 @@ void HelperContributionViewModel::helperAppeared(eagine::identifier_t helperId) 
     }
 }
 //------------------------------------------------------------------------------
-void HelperContributionViewModel::helperContributed(
-  eagine::identifier_t helperId) {
+void HelperContributionViewModel::helperContributed(eagine::identifier_t helperId) {
     _helpers.insert(helperId);
     _cacheCounts();
     emit solved();
@@ -68,8 +67,7 @@ auto HelperContributionViewModel::getHelperIds() const -> const QStringList& {
     return _helperIds;
 }
 //------------------------------------------------------------------------------
-auto HelperContributionViewModel::getUpdatedCounts() const
-  -> const QVariantList& {
+auto HelperContributionViewModel::getUpdatedCounts() const -> const QVariantList& {
     return _updatedCounts;
 }
 //------------------------------------------------------------------------------
@@ -77,8 +75,7 @@ auto HelperContributionViewModel::getMaxUpdatedCount() const -> qreal {
     return static_cast<qreal>(_maxUpdatedCount);
 }
 //------------------------------------------------------------------------------
-auto HelperContributionViewModel::getSolvedCounts() const
-  -> const QVariantList& {
+auto HelperContributionViewModel::getSolvedCounts() const -> const QVariantList& {
     return _solvedCounts;
 }
 //------------------------------------------------------------------------------

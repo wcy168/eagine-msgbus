@@ -24,10 +24,8 @@ TilingModel::TilingModel(TilingBackend& backend)
     info.display_name = "sudoku tiling generator";
     info.description = "sudoku tiling solver/generator GUI application";
 
-    eagine::connect<&TilingModel::onHelperAppeared>(
-      this, _tiling.helper_appeared);
-    eagine::connect<&TilingModel::onFragmentAdded>(
-      this, _tiling.tiles_generated_4);
+    eagine::connect<&TilingModel::onHelperAppeared>(this, _tiling.helper_appeared);
+    eagine::connect<&TilingModel::onFragmentAdded>(this, _tiling.tiles_generated_4);
     eagine::connect<&TilingModel::onQueueLengthChanged>(
       this, _tiling.queue_length_changed);
 }
@@ -45,9 +43,7 @@ void TilingModel::reinitialize() {
 
     _tiling.reinitialize(
       {_width, _height},
-      eagine::default_sudoku_board_traits<4>()
-        .make_generator()
-        .generate_medium());
+      eagine::default_sudoku_board_traits<4>().make_generator().generate_medium());
     _backend.onTilingReset();
     emit reinitialized();
 }
@@ -116,8 +112,8 @@ auto TilingModel::isComplete() const noexcept -> bool {
     return _tiling.tiling_complete();
 }
 //------------------------------------------------------------------------------
-auto TilingModel::getUpdatedByHelper(
-  eagine::identifier_t helperId) const noexcept -> qlonglong {
+auto TilingModel::getUpdatedByHelper(eagine::identifier_t helperId) const noexcept
+  -> qlonglong {
     return qlonglong(
       _tiling.updated_by_helper(helperId, eagine::unsigned_constant<4>{}));
 }

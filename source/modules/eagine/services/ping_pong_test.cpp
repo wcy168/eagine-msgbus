@@ -29,8 +29,7 @@ void ping_pong_1(auto& s) {
     eagine::msgbus::router router(ctx);
     router.add_acceptor(std::move(acceptor));
 
-    eagine::msgbus::service_composition<eagine::msgbus::pinger<>> pinger{
-      ping_ept};
+    eagine::msgbus::service_composition<eagine::msgbus::pinger<>> pinger{ping_ept};
     eagine::msgbus::service_composition<eagine::msgbus::pingable<>> pingable{
       pong_ept};
 
@@ -99,8 +98,7 @@ void ping_pong_2(auto& s) {
     eagine::msgbus::router router(ctx);
     router.add_acceptor(std::move(acceptor));
 
-    eagine::msgbus::service_composition<eagine::msgbus::pinger<>> pinger{
-      ping_ept};
+    eagine::msgbus::service_composition<eagine::msgbus::pinger<>> pinger{ping_ept};
     eagine::msgbus::service_composition<eagine::msgbus::pingable<>> pingable{
       pong_ept};
 

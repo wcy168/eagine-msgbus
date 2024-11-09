@@ -18,12 +18,10 @@ TrackerModel::TrackerModel(MonitorBackend& backend)
   , _tracker{_bus} {
     eagine::msgbus::setup_connectors(main_context(), _tracker);
 
-    eagine::connect<&TrackerModel::handleHostChanged>(
-      this, _tracker.host_changed);
+    eagine::connect<&TrackerModel::handleHostChanged>(this, _tracker.host_changed);
     eagine::connect<&TrackerModel::handleInstanceChanged>(
       this, _tracker.instance_changed);
-    eagine::connect<&TrackerModel::handleNodeChanged>(
-      this, _tracker.node_changed);
+    eagine::connect<&TrackerModel::handleNodeChanged>(this, _tracker.node_changed);
 
     eagine::connect<&TrackerModel::handleRouterDisappeared>(
       this, _tracker.router_disappeared);
@@ -79,12 +77,10 @@ void TrackerModel::handleHostChanged(
             if(pos != _host_parameters.end()) {
                 if(auto model{pos->second.lock()}) {
                     if(auto value{host.short_average_load()}) {
-                        extract(model)._short_average_load_history =
-                          extract(value);
+                        extract(model)._short_average_load_history = extract(value);
                     }
                     if(auto value{host.long_average_load()}) {
-                        extract(model)._long_average_load_history =
-                          extract(value);
+                        extract(model)._long_average_load_history = extract(value);
                     }
                 }
             }
@@ -123,8 +119,7 @@ void TrackerModel::handleNodeChanged(
             if(pos != _node_parameters.end()) {
                 if(auto model{pos->second.lock()}) {
                     if(auto value{node.ping_success_rate()}) {
-                        extract(model)._ping_success_rate_history =
-                          extract(value);
+                        extract(model)._ping_success_rate_history = extract(value);
                     }
                 }
             }

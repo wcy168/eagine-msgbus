@@ -15,8 +15,7 @@ import std;
 //------------------------------------------------------------------------------
 class PaintedImage : public QQuickPaintedItem {
     Q_OBJECT
-    Q_PROPERTY(
-      const QImage* image READ getImage WRITE setImage NOTIFY imageChanged)
+    Q_PROPERTY(const QImage* image READ getImage WRITE setImage NOTIFY imageChanged)
 public:
     PaintedImage(QQuickItem* parent = nullptr);
 

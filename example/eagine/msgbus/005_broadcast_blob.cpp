@@ -28,9 +28,7 @@ auto main(main_ctx& ctx) -> int {
             if(file_contents data{arg}) {
 
                 bus.broadcast_blob(
-                  message_id{"Example", "Content"},
-                  data,
-                  std::chrono::minutes(5));
+                  message_id{"Example", "Content"}, data, std::chrono::minutes(5));
             }
         }
     }
@@ -53,4 +51,3 @@ auto main(main_ctx& ctx) -> int {
 auto main(int argc, const char** argv) -> int {
     return eagine::default_main(argc, argv, eagine::main);
 }
-

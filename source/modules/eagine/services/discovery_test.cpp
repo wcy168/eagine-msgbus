@@ -91,8 +91,9 @@ void discovery_1(auto& s) {
     auto& ctx{s.context()};
     eagine::msgbus::registry the_reg{ctx};
 
-    auto& observer = the_reg.emplace<eagine::msgbus::service_composition<
-      eagine::msgbus::subscriber_discovery<>>>("Observer");
+    auto& observer = the_reg.emplace<
+      eagine::msgbus::service_composition<eagine::msgbus::subscriber_discovery<>>>(
+      "Observer");
 
     if(the_reg.wait_for_id_of(std::chrono::seconds{30}, observer)) {
         auto& pinger =
@@ -108,22 +109,20 @@ void discovery_1(auto& s) {
         bool ponger_alive{false};
 
         const auto discovered_all{[&] {
-            return found_pinger and found_ponger and pinger_alive and
-                   ponger_alive;
+            return found_pinger and found_ponger and pinger_alive and ponger_alive;
         }};
 
-        const auto handle_alive{
-          [&](
-            const eagine::msgbus::result_context&,
-            const eagine::msgbus::subscriber_alive& alive) {
-              if(pinger.get_id() == alive.source.endpoint_id) {
-                  pinger_alive = true;
-              }
-              if(ponger.get_id() == alive.source.endpoint_id) {
-                  ponger_alive = true;
-              }
-              trck.checkpoint(1);
-          }};
+        const auto handle_alive{[&](
+                                  const eagine::msgbus::result_context&,
+                                  const eagine::msgbus::subscriber_alive& alive) {
+            if(pinger.get_id() == alive.source.endpoint_id) {
+                pinger_alive = true;
+            }
+            if(ponger.get_id() == alive.source.endpoint_id) {
+                ponger_alive = true;
+            }
+            trck.checkpoint(1);
+        }};
         observer.reported_alive.connect({eagine::construct_from, handle_alive});
 
         const auto handle_subscribed{
@@ -141,8 +140,7 @@ void discovery_1(auto& s) {
               }
               trck.checkpoint(2);
           }};
-        observer.subscribed.connect(
-          {eagine::construct_from, handle_subscribed});
+        observer.subscribed.connect({eagine::construct_from, handle_subscribed});
 
         if(the_reg.wait_for_id_of(std::chrono::seconds{30}, pinger, ponger)) {
             pinger.assign_target(ponger.bus_node().get_id());
@@ -177,8 +175,9 @@ void discovery_2(auto& s) {
     auto& ctx{s.context()};
     eagine::msgbus::registry the_reg{ctx};
 
-    auto& observer = the_reg.emplace<eagine::msgbus::service_composition<
-      eagine::msgbus::subscriber_discovery<>>>("Observer");
+    auto& observer = the_reg.emplace<
+      eagine::msgbus::service_composition<eagine::msgbus::subscriber_discovery<>>>(
+      "Observer");
 
     if(the_reg.wait_for_id_of(std::chrono::seconds{30}, observer)) {
         auto& pinger =
@@ -194,8 +193,7 @@ void discovery_2(auto& s) {
         bool ponger_alive{false};
 
         const auto discovered_all{[&] {
-            return found_pinger and found_ponger and pinger_alive and
-                   ponger_alive;
+            return found_pinger and found_ponger and pinger_alive and ponger_alive;
         }};
 
         pinger.assign_target(ponger.bus_node().get_id());
@@ -265,8 +263,9 @@ void discovery_3(auto& s) {
     auto& ctx{s.context()};
     eagine::msgbus::registry the_reg{ctx};
 
-    auto& observer = the_reg.emplace<eagine::msgbus::service_composition<
-      eagine::msgbus::subscriber_discovery<>>>("Observer");
+    auto& observer = the_reg.emplace<
+      eagine::msgbus::service_composition<eagine::msgbus::subscriber_discovery<>>>(
+      "Observer");
 
     if(the_reg.wait_for_id_of(std::chrono::seconds{30}, observer)) {
         auto& pinger =
@@ -282,8 +281,7 @@ void discovery_3(auto& s) {
         bool ponger_alive{false};
 
         const auto discovered_all{[&] {
-            return found_pinger and found_ponger and pinger_alive and
-                   ponger_alive;
+            return found_pinger and found_ponger and pinger_alive and ponger_alive;
         }};
 
         pinger.assign_target(ponger.bus_node().get_id());

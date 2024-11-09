@@ -36,9 +36,7 @@ public:
           msgbus_map<"statsEndpt", &statistics_consumer_impl::_handle_endpoint>{});
         base.add_method(
           this,
-          msgbus_map<
-            "statsConn",
-            &statistics_consumer_impl::_handle_connection>{});
+          msgbus_map<"statsConn", &statistics_consumer_impl::_handle_connection>{});
     }
 
     void query_statistics(endpoint_id_t node_id) noexcept final {
@@ -86,8 +84,7 @@ public:
       const stored_message& message) noexcept
       -> std::optional<connection_statistics> final {
         if(msg_ctx.is_special_message("statsConn")) {
-            return default_deserialized<connection_statistics>(
-                     message.content())
+            return default_deserialized<connection_statistics>(message.content())
               .to_optional();
         }
         return {};
@@ -99,8 +96,7 @@ private:
       const stored_message& message) noexcept -> bool {
         router_statistics stats{};
         if(default_deserialize(stats, message.content())) {
-            signals.router_stats_received(
-              result_context{msg_ctx, message}, stats);
+            signals.router_stats_received(result_context{msg_ctx, message}, stats);
         }
         return true;
     }
@@ -110,8 +106,7 @@ private:
       const stored_message& message) noexcept -> bool {
         bridge_statistics stats{};
         if(default_deserialize(stats, message.content())) {
-            signals.bridge_stats_received(
-              result_context{msg_ctx, message}, stats);
+            signals.bridge_stats_received(result_context{msg_ctx, message}, stats);
         }
         return true;
     }
@@ -144,8 +139,7 @@ private:
 //------------------------------------------------------------------------------
 auto make_statistics_consumer_impl(
   subscriber& base,
-  statistics_consumer_signals& sigs)
-  -> unique_holder<statistics_consumer_intf> {
+  statistics_consumer_signals& sigs) -> unique_holder<statistics_consumer_intf> {
     return {hold<statistics_consumer_impl>, base, sigs};
 }
 //------------------------------------------------------------------------------

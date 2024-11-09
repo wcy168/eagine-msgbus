@@ -142,36 +142,35 @@ private:
 };
 //------------------------------------------------------------------------------
 auto bridge_state::_make_send_handler() noexcept {
-    return [this](
-             const message_id msg_id,
-             const message_age msg_age,
-             message_view message) {
-        if(not message.add_age(msg_age).too_old()) [[likely]] {
-            default_serializer_backend backend(_sink);
-            if(serialize_message_header(msg_id, message, backend)) [[likely]] {
-                span_size_t i{0};
-                do_dissolve_bits(
-                  make_span_getter(i, message.data()),
-                  [this](byte b) {
-                      const auto encode{make_base64_encode_transform()};
-                      if(auto opt_c{encode(b)}) [[likely]] {
-                          this->_output << *opt_c;
-                          return true;
-                      }
-                      return false;
-                  },
-                  6);
+    return
+      [this](
+        const message_id msg_id, const message_age msg_age, message_view message) {
+          if(not message.add_age(msg_age).too_old()) [[likely]] {
+              default_serializer_backend backend(_sink);
+              if(serialize_message_header(msg_id, message, backend)) [[likely]] {
+                  span_size_t i{0};
+                  do_dissolve_bits(
+                    make_span_getter(i, message.data()),
+                    [this](byte b) {
+                        const auto encode{make_base64_encode_transform()};
+                        if(auto opt_c{encode(b)}) [[likely]] {
+                            this->_output << *opt_c;
+                            return true;
+                        }
+                        return false;
+                    },
+                    6);
 
-                _output << '\n' << std::flush;
-                ++_forwarded_messages;
-            } else {
-                ++_dropped_messages;
-            }
-        } else {
-            ++_dropped_messages;
-        }
-        return true;
-    };
+                  _output << '\n' << std::flush;
+                  ++_forwarded_messages;
+              } else {
+                  ++_dropped_messages;
+              }
+          } else {
+              ++_dropped_messages;
+          }
+          return true;
+      };
 }
 //------------------------------------------------------------------------------
 void bridge_state::send_output() noexcept {
@@ -438,14 +437,12 @@ auto bridge::_do_push(const message_id msg_id, message_view& message) noexcept
 //------------------------------------------------------------------------------
 auto bridge::_avg_msg_age_c2o() const noexcept -> std::chrono::microseconds {
     return std::chrono::duration_cast<std::chrono::microseconds>(
-      _message_age_sum_c2o /
-      (_forwarded_messages_c2o + _dropped_messages_c2o + 1));
+      _message_age_sum_c2o / (_forwarded_messages_c2o + _dropped_messages_c2o + 1));
 }
 //------------------------------------------------------------------------------
 auto bridge::_avg_msg_age_i2c() const noexcept -> std::chrono::microseconds {
     return std::chrono::duration_cast<std::chrono::microseconds>(
-      _message_age_sum_i2c /
-      (_forwarded_messages_i2c + _dropped_messages_i2c + 1));
+      _message_age_sum_i2c / (_forwarded_messages_i2c + _dropped_messages_i2c + 1));
 }
 //------------------------------------------------------------------------------
 constexpr auto bridge_log_stat_msg_count() noexcept {
@@ -490,8 +487,7 @@ void bridge::_log_bridge_stats_i2c() noexcept {
           float(bridge_log_stat_msg_count()) / interval.count()};
 
         _stats.message_age_milliseconds =
-          std::chrono::duration_cast<std::chrono::milliseconds>(
-            _avg_msg_age_i2c())
+          std::chrono::duration_cast<std::chrono::milliseconds>(_avg_msg_age_i2c())
             .count();
 
         log_chart_sample("msgPerSecI", msgs_per_sec);
@@ -511,8 +507,7 @@ auto bridge::_forward_messages() noexcept -> work_done {
     some_true something_done{};
 
     const auto forward_conn_to_output{
-      [this](
-        const message_id msg_id, message_age msg_age, message_view message) {
+      [this](const message_id msg_id, message_age msg_age, message_view message) {
           _message_age_sum_c2o += message.add_age(msg_age).age();
           if(message.too_old()) [[unlikely]] {
               ++_dropped_messages_c2o;
@@ -528,30 +523,29 @@ auto bridge::_forward_messages() noexcept -> work_done {
       }};
 
     if(_connection) [[likely]] {
-        something_done(_connection->fetch_messages(
-          {construct_from, forward_conn_to_output}));
+        something_done(
+          _connection->fetch_messages({construct_from, forward_conn_to_output}));
     }
     _state->notify_output_ready();
 
     if(_state) [[likely]] {
-        const auto forward_input_to_conn{[this](
-                                           const message_id msg_id,
-                                           message_age msg_age,
-                                           message_view message) {
-            _message_age_sum_i2c += message.add_age(msg_age).age();
-            if(message.too_old()) [[unlikely]] {
-                ++_dropped_messages_i2c;
-                return true;
-            }
-            if(_should_log_bridge_stats_i2c()) [[unlikely]] {
-                _log_bridge_stats_i2c();
-            }
-            if(this->_handle_special(msg_id, message, true) == was_handled) {
-                return true;
-            }
-            this->_do_send(msg_id, message);
-            return true;
-        }};
+        const auto forward_input_to_conn{
+          [this](
+            const message_id msg_id, message_age msg_age, message_view message) {
+              _message_age_sum_i2c += message.add_age(msg_age).age();
+              if(message.too_old()) [[unlikely]] {
+                  ++_dropped_messages_i2c;
+                  return true;
+              }
+              if(_should_log_bridge_stats_i2c()) [[unlikely]] {
+                  _log_bridge_stats_i2c();
+              }
+              if(this->_handle_special(msg_id, message, true) == was_handled) {
+                  return true;
+              }
+              this->_do_send(msg_id, message);
+              return true;
+          }};
 
         something_done(
           _state->fetch_messages({construct_from, forward_input_to_conn}));

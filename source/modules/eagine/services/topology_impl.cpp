@@ -25,8 +25,7 @@ public:
 
     void add_methods(subscriber& base) noexcept final;
 
-    void query_topology(endpoint& bus, const endpoint_id_t node_id) noexcept
-      final;
+    void query_topology(endpoint& bus, const endpoint_id_t node_id) noexcept final;
 
     auto decode_router_topology_info(
       const message_context& msg_ctx,
@@ -145,12 +144,9 @@ void network_topology_impl::add_methods(subscriber& base) noexcept {
     base.add_method(this, msgbus_map<"topoRutrCn", &This::_handle_router>{});
     base.add_method(this, msgbus_map<"topoBrdgCn", &This::_handle_bridge>{});
     base.add_method(this, msgbus_map<"topoEndpt", &This::_handle_endpoint>{});
-    base.add_method(
-      this, msgbus_map<"byeByeRutr", &This::_handle_router_bye>{});
-    base.add_method(
-      this, msgbus_map<"byeByeBrdg", &This::_handle_bridge_bye>{});
-    base.add_method(
-      this, msgbus_map<"byeByeEndp", &This::_handle_endpoint_bye>{});
+    base.add_method(this, msgbus_map<"byeByeRutr", &This::_handle_router_bye>{});
+    base.add_method(this, msgbus_map<"byeByeBrdg", &This::_handle_bridge_bye>{});
+    base.add_method(this, msgbus_map<"byeByeEndp", &This::_handle_endpoint_bye>{});
 }
 //------------------------------------------------------------------------------
 void network_topology_impl::query_topology(
@@ -164,8 +160,7 @@ void network_topology_impl::query_topology(
 //------------------------------------------------------------------------------
 auto network_topology_impl::decode_router_topology_info(
   const message_context& msg_ctx,
-  const stored_message& message) noexcept
-  -> std::optional<router_topology_info> {
+  const stored_message& message) noexcept -> std::optional<router_topology_info> {
     if(msg_ctx.is_special_message("topoRutrCn")) {
         return default_deserialized<router_topology_info>(message.content())
           .to_optional();
@@ -175,8 +170,7 @@ auto network_topology_impl::decode_router_topology_info(
 //------------------------------------------------------------------------------
 auto network_topology_impl::decode_bridge_topology_info(
   const message_context& msg_ctx,
-  const stored_message& message) noexcept
-  -> std::optional<bridge_topology_info> {
+  const stored_message& message) noexcept -> std::optional<bridge_topology_info> {
     if(msg_ctx.is_special_message("topoBrdgCn")) {
         return default_deserialized<bridge_topology_info>(message.content())
           .to_optional();
@@ -186,8 +180,7 @@ auto network_topology_impl::decode_bridge_topology_info(
 //------------------------------------------------------------------------------
 auto network_topology_impl::decode_endpoint_topology_info(
   const message_context& msg_ctx,
-  const stored_message& message) noexcept
-  -> std::optional<endpoint_topology_info> {
+  const stored_message& message) noexcept -> std::optional<endpoint_topology_info> {
     if(msg_ctx.is_special_message("topoEndpt")) {
         return default_deserialized<endpoint_topology_info>(message.content())
           .to_optional();
@@ -228,4 +221,3 @@ auto make_network_topology_impl(subscriber& base, network_topology_signals& sigs
 }
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus
-

@@ -155,9 +155,7 @@ private:
       const result_context&,
       const subscriber_subscribed& sub) noexcept {
         if(sub.message_type.is("eagiStream", "startFrwrd")) {
-            if(
-              not has_stream_relay() or
-              (_stream_relay_hops > sub.source.hop_count)) {
+            if(not has_stream_relay() or (_stream_relay_hops > sub.source.hop_count)) {
                 set_stream_relay(sub.source.endpoint_id, sub.source.hop_count);
             }
         }
@@ -185,8 +183,7 @@ private:
 
     endpoint_id_t _stream_relay_id{};
     timeout _stream_relay_timeout{endpoint_alive_notify_period() * 2, nothing};
-    subscriber_info::hop_count_t _stream_relay_hops{
-      subscriber_info::max_hops()};
+    subscriber_info::hop_count_t _stream_relay_hops{subscriber_info::max_hops()};
 };
 //------------------------------------------------------------------------------
 /// @brief Service providing encoded stream data.
@@ -267,10 +264,7 @@ protected:
 
         base::add_method(
           this,
-          message_map<
-            "eagiStream",
-            "startSend",
-            &This::_handle_start_send_data>{});
+          message_map<"eagiStream", "startSend", &This::_handle_start_send_data>{});
 
         base::add_method(
           this,
@@ -461,8 +455,7 @@ private:
       const stored_message& message) noexcept -> bool {
         stream_info info{};
         if(default_deserialize(info, message.content())) {
-            stream_appeared(
-              message.source_id, info, this->verify_bits(message));
+            stream_appeared(message.source_id, info, this->verify_bits(message));
         }
         return true;
     }
@@ -472,8 +465,7 @@ private:
       const stored_message& message) noexcept -> bool {
         stream_info info{};
         if(default_deserialize(info, message.content())) {
-            stream_disappeared(
-              message.source_id, info, this->verify_bits(message));
+            stream_disappeared(message.source_id, info, this->verify_bits(message));
         }
         return true;
     }
@@ -491,8 +483,7 @@ private:
 /// @see stream_provider
 /// @see stream_consumer
 export template <typename Base = subscriber>
-class stream_relay
-  : public require_services<Base, subscriber_discovery, pingable> {
+class stream_relay : public require_services<Base, subscriber_discovery, pingable> {
     using This = stream_relay;
     using base = require_services<Base, subscriber_discovery, pingable>;
     using stream_key_t = std::tuple<endpoint_id_t, identifier_t>;
@@ -587,10 +578,7 @@ private:
                     stream.info = info;
                 }
                 _forward_stream_announce(
-                  message.source_id,
-                  stream,
-                  this->verify_bits(message),
-                  message);
+                  message.source_id, stream, this->verify_bits(message), message);
             }
             stream.stream_timeout.reset();
         }
@@ -647,9 +635,8 @@ private:
         return true;
     }
 
-    auto _handle_stop_forward(
-      const message_context&,
-      const stored_message&) noexcept -> bool {
+    auto _handle_stop_forward(const message_context&, const stored_message&) noexcept
+      -> bool {
         return true;
     }
 
@@ -676,8 +663,7 @@ private:
         if(msg_id.is("eagiStream", "startFrwrd")) {
             auto pos = _relays.find(sub_info.endpoint_id);
             if(pos == _relays.end()) {
-                pos =
-                  _relays.emplace(sub_info.endpoint_id, relay_status{}).first;
+                pos = _relays.emplace(sub_info.endpoint_id, relay_status{}).first;
             }
             pos->second.relay_timeout.reset();
         }
@@ -702,4 +688,3 @@ private:
 //------------------------------------------------------------------------------
 } // namespace msgbus
 } // namespace eagine
-

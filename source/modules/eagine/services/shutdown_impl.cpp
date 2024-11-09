@@ -27,8 +27,7 @@ public:
 
     auto do_decode_shutdown_request(
       const message_context& msg_ctx,
-      const stored_message& message) noexcept
-      -> std::optional<shutdown_request>;
+      const stored_message& message) noexcept -> std::optional<shutdown_request>;
 
     auto decode_shutdown_request(
       const message_context& msg_ctx,
@@ -57,10 +56,7 @@ auto shutdown_target_impl::_handle_shutdown(
 void shutdown_target_impl::add_methods() noexcept {
     base.add_method(
       this,
-      message_map<
-        "Shutdown",
-        "shutdown",
-        &shutdown_target_impl::_handle_shutdown>{});
+      message_map<"Shutdown", "shutdown", &shutdown_target_impl::_handle_shutdown>{});
 }
 //------------------------------------------------------------------------------
 auto shutdown_target_impl::do_decode_shutdown_request(

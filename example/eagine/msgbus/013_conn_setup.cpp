@@ -35,15 +35,13 @@ public:
           this,
           message_map<"Fibonacci", "FindServer", &fibonacci_server::is_ready>{},
           message_map<"Fibonacci", "Calculate", &fibonacci_server::calculate>{},
-          message_map<"Fibonacci", "Shutdown", &fibonacci_server::shutdown>{}) {
-    }
+          message_map<"Fibonacci", "Shutdown", &fibonacci_server::shutdown>{}) {}
     fibonacci_server(const fibonacci_server&) = delete;
     auto operator=(fibonacci_server&& temp) = delete;
     auto operator=(const fibonacci_server&) = delete;
     ~fibonacci_server() noexcept final = default;
 
-    auto shutdown(const message_context&, const stored_message&) noexcept
-      -> bool {
+    auto shutdown(const message_context&, const stored_message&) noexcept -> bool {
         _done = true;
         return true;
     }
@@ -132,8 +130,7 @@ public:
             if(serialize(arg, write_backend)) {
                 message_view msg_out{sink.done()};
                 msg_out.set_serializer_id(write_backend.type_id());
-                bus_node().respond_to(
-                  msg_in, {"Fibonacci", "Calculate"}, msg_out);
+                bus_node().respond_to(msg_in, {"Fibonacci", "Calculate"}, msg_out);
             }
         }
         return true;
@@ -219,4 +216,3 @@ auto main(main_ctx& ctx) -> int {
 auto main(int argc, const char** argv) -> int {
     return eagine::default_main(argc, argv, eagine::main);
 }
-

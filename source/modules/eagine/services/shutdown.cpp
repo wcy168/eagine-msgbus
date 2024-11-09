@@ -70,8 +70,7 @@ class shutdown_target
 public:
     auto decode_shutdown_request(
       const message_context& msg_ctx,
-      const stored_message& message) noexcept
-      -> std::optional<shutdown_request> {
+      const stored_message& message) noexcept -> std::optional<shutdown_request> {
         return _impl->decode_shutdown_request(msg_ctx, message);
     }
 
@@ -132,4 +131,3 @@ protected:
 };
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus
-

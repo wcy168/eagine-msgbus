@@ -75,8 +75,7 @@ protected:
     }
 
 private:
-    const unique_holder<sudoku_helper_intf> _impl{
-      make_sudoku_helper_impl(*this)};
+    const unique_holder<sudoku_helper_intf> _impl{make_sudoku_helper_impl(*this)};
 };
 //------------------------------------------------------------------------------
 export using sudoku_solver_key = std::variant<int, std::tuple<int, int>>;
@@ -142,9 +141,8 @@ struct sudoku_solver_intf : interface<sudoku_solver_intf> {
 
     virtual auto has_work() const noexcept -> bool = 0;
     virtual void reset(unsigned rank) noexcept = 0;
-    virtual auto has_enqueued(
-      const sudoku_solver_key& key,
-      unsigned rank) noexcept -> bool = 0;
+    virtual auto has_enqueued(const sudoku_solver_key& key, unsigned rank) noexcept
+      -> bool = 0;
 
     virtual void set_solution_timeout(
       unsigned rank,
@@ -320,8 +318,7 @@ public:
     /// @brief Indicates if a board with the given rank and key is enqueued.
     /// @see enqueue
     template <unsigned S>
-    auto has_enqueued(const Key& key, const unsigned_constant<S>) noexcept
-      -> bool {
+    auto has_enqueued(const Key& key, const unsigned_constant<S>) noexcept -> bool {
         return _impl->has_enqueued(key, S);
     }
 
@@ -359,8 +356,7 @@ public:
     /// @see solved_count
     /// @see updated_by_helper
     template <unsigned S>
-    auto updated_count(const unsigned_constant<S>) const noexcept
-      -> std::intmax_t {
+    auto updated_count(const unsigned_constant<S>) const noexcept -> std::intmax_t {
         return _impl->updated_count(S);
     }
 
@@ -368,9 +364,8 @@ public:
     /// @see updated_by_helper
     /// @see solved_count
     template <unsigned S>
-    auto solved_by_helper(
-      const endpoint_id_t helper_id,
-      const unsigned_constant<S>) const noexcept -> std::intmax_t {
+    auto solved_by_helper(const endpoint_id_t helper_id, const unsigned_constant<S>)
+      const noexcept -> std::intmax_t {
         return _impl->solved_by_helper(helper_id, S);
     }
 
@@ -378,8 +373,7 @@ public:
     /// @see updated_count
     /// @see solved_by_helper
     template <unsigned S>
-    auto solved_count(const unsigned_constant<S>) const noexcept
-      -> std::intmax_t {
+    auto solved_count(const unsigned_constant<S>) const noexcept -> std::intmax_t {
         return _impl->solved_count(S);
     }
 
@@ -437,9 +431,7 @@ public:
 private:
     friend class sudoku_tiles<S>;
 
-    sudoku_fragment_view(
-      const sudoku_tiles<S>& tiles,
-      Coord board_coord) noexcept
+    sudoku_fragment_view(const sudoku_tiles<S>& tiles, Coord board_coord) noexcept
       : _tiles{tiles}
       , _board_coord{std::move(board_coord)} {}
 
@@ -603,8 +595,7 @@ public:
       std::ostream& out,
       const Coord min,
       const Coord max,
-      const basic_sudoku_board_traits<S>& traits) const noexcept
-      -> std::ostream& {
+      const basic_sudoku_board_traits<S>& traits) const noexcept -> std::ostream& {
         const auto [xmin, ymin, xmax, ymax] = boards_extent(min, max);
 
         const int w{width()}, h{height()};
@@ -657,8 +648,8 @@ public:
     }
 
     /// @brief Prints the current tiling using the specified sudoku board traits.
-    auto print(std::ostream& out, const Coord min, const Coord max)
-      const noexcept -> std::ostream& {
+    auto print(std::ostream& out, const Coord min, const Coord max) const noexcept
+      -> std::ostream& {
         return print(out, min, max, _traits);
     }
 
@@ -851,8 +842,7 @@ public:
     }
 
     /// @brief Suspends sending of boards to helpers for the specified interval
-    auto suspend_send_for(std::chrono::milliseconds interval) noexcept
-      -> auto& {
+    auto suspend_send_for(std::chrono::milliseconds interval) noexcept -> auto& {
         _impl->suspend_send_for(interval);
         return *this;
     }
@@ -905,8 +895,7 @@ public:
 
     /// @brief Logs the contributions of the helpers to the solution.
     template <unsigned S>
-    auto log_contribution_histogram(const unsigned_constant<S>) noexcept
-      -> auto& {
+    auto log_contribution_histogram(const unsigned_constant<S>) noexcept -> auto& {
         return log_contribution_histogram(S);
     }
 
@@ -922,4 +911,3 @@ private:
 };
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus
-

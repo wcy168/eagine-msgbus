@@ -25,11 +25,7 @@ import :endpoint;
 
 namespace eagine::msgbus {
 //------------------------------------------------------------------------------
-export template <
-  typename Result,
-  typename Deserializer,
-  typename Source,
-  bool NoExcept>
+export template <typename Result, typename Deserializer, typename Source, bool NoExcept>
 class callback_invoker_base {
 
 public:
@@ -177,9 +173,8 @@ private:
 export template <typename Result, typename Deserializer, typename Source>
 class invoker_base {
 public:
-    auto fulfill_by(
-      const message_context&,
-      const stored_message& message) noexcept -> bool {
+    auto fulfill_by(const message_context&, const stored_message& message) noexcept
+      -> bool {
         const auto invocation_id = message.sequence_no;
         std::remove_cv_t<std::remove_reference_t<Result>> result{};
 
@@ -197,8 +192,7 @@ public:
     constexpr auto map_fulfill_by(const message_id msg_id) noexcept {
         return std::tuple<
           invoker_base*,
-          message_handler_map<
-            member_function_constant_t<&invoker_base::fulfill_by>>>(
+          message_handler_map<member_function_constant_t<&invoker_base::fulfill_by>>>(
           this, msg_id);
     }
 
@@ -318,11 +312,9 @@ public:
         return invoke_on(bus, target_id, msg_id, {});
     }
 
-    auto invoke(endpoint& bus, const message_id msg_id) noexcept
-      -> future<Result> {
+    auto invoke(endpoint& bus, const message_id msg_id) noexcept -> future<Result> {
         return invoke_on(bus, broadcast_endpoint_id(), msg_id);
     }
 };
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus
-

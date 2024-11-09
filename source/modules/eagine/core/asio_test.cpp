@@ -15,8 +15,7 @@ import eagine.msgbus.core;
 //------------------------------------------------------------------------------
 void asio_tcp_ipv4_type_id(auto& s) {
     eagitest::case_ test{s, 1, "type id TCP/IPv4"};
-    auto fact{
-      eagine::msgbus::make_asio_tcp_ipv4_connection_factory(s.context())};
+    auto fact{eagine::msgbus::make_asio_tcp_ipv4_connection_factory(s.context())};
     test.ensure(bool(fact), "has factory");
     auto cacc{fact->make_acceptor(eagine::identifier{"localhost"})};
     test.ensure(bool(cacc), "has acceptor");
@@ -29,8 +28,7 @@ void asio_tcp_ipv4_type_id(auto& s) {
 //------------------------------------------------------------------------------
 void asio_udp_ipv4_type_id(auto& s) {
     eagitest::case_ test{s, 2, "type id UDP/IPv4"};
-    auto fact{
-      eagine::msgbus::make_asio_udp_ipv4_connection_factory(s.context())};
+    auto fact{eagine::msgbus::make_asio_udp_ipv4_connection_factory(s.context())};
     test.ensure(bool(fact), "has factory");
     auto cacc{fact->make_acceptor(eagine::identifier{"localhost"})};
     test.ensure(bool(cacc), "has acceptor");
@@ -45,8 +43,7 @@ void asio_udp_ipv4_type_id(auto& s) {
 //------------------------------------------------------------------------------
 void asio_tcp_ipv4_addr_kind(auto& s) {
     eagitest::case_ test{s, 3, "addr kind TCP/IPv4"};
-    auto fact{
-      eagine::msgbus::make_asio_tcp_ipv4_connection_factory(s.context())};
+    auto fact{eagine::msgbus::make_asio_tcp_ipv4_connection_factory(s.context())};
     test.ensure(bool(fact), "has factory");
     auto cacc{fact->make_acceptor(eagine::identifier{"localhost"})};
     test.ensure(bool(cacc), "has acceptor");
@@ -63,8 +60,7 @@ void asio_tcp_ipv4_addr_kind(auto& s) {
 //------------------------------------------------------------------------------
 void asio_udp_ipv4_addr_kind(auto& s) {
     eagitest::case_ test{s, 4, "addr kind TCP/IPv4"};
-    auto fact{
-      eagine::msgbus::make_asio_udp_ipv4_connection_factory(s.context())};
+    auto fact{eagine::msgbus::make_asio_udp_ipv4_connection_factory(s.context())};
     test.ensure(bool(fact), "has factory");
     auto cacc{fact->make_acceptor(eagine::identifier{"localhost"})};
     test.ensure(bool(cacc), "has acceptor");
@@ -82,10 +78,7 @@ void asio_udp_ipv4_addr_kind(auto& s) {
 // roundtrip
 //------------------------------------------------------------------------------
 template <typename Fact>
-void asio_roundtrip_F(
-  eagitest::case_& test,
-  Fact fact,
-  eagine::string_view addr) {
+void asio_roundtrip_F(eagitest::case_& test, Fact fact, eagine::string_view addr) {
 
     eagitest::track trck{test, 0, 1};
     auto& rg{test.random()};

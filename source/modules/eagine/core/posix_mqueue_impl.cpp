@@ -155,8 +155,7 @@ public:
 
     /// @brief Alias for received message handler.
     /// @see receive
-    using receive_handler =
-      callable_ref<void(unsigned, span<const char>) noexcept>;
+    using receive_handler = callable_ref<void(unsigned, span<const char>) noexcept>;
 
     /// @brief Receives messages and calls the specified handler on them.
     auto receive(memory::span<char>, const receive_handler) noexcept -> bool;
@@ -340,9 +339,8 @@ auto posix_mqueue::max_data_size() noexcept -> valid_if_positive<span_size_t> {
     return {0};
 }
 //------------------------------------------------------------------------------
-auto posix_mqueue::send(
-  const unsigned priority,
-  const span<const char> blk) noexcept -> posix_mqueue& {
+auto posix_mqueue::send(const unsigned priority, const span<const char> blk) noexcept
+  -> posix_mqueue& {
     if(is_open()) [[likely]] {
         errno = 0;
         ::mq_send(_ohandle, blk.data(), integer(blk.size()), priority);
@@ -455,8 +453,7 @@ public:
     auto send(const message_id msg_id, const message_view& message) noexcept
       -> bool final;
 
-    auto fetch_messages(const fetch_handler handler) noexcept
-      -> work_done final {
+    auto fetch_messages(const fetch_handler handler) noexcept -> work_done final {
         const std::unique_lock lock{_mutex_incoming};
         return _incoming.fetch_all(handler);
     }
@@ -563,8 +560,7 @@ auto posix_mqueue_connection::_reconnect(posix_mqueue& connect_queue) noexcept
             _data_queue.unlink();
             assert(_shared_state);
 
-            log_debug("connecting to ${name}")
-              .arg("name", connect_queue.get_name());
+            log_debug("connecting to ${name}").arg("name", connect_queue.get_name());
 
             if(not _data_queue.set_name(_shared_state->make_id())
                      .create()
@@ -733,8 +729,7 @@ public:
         return something_done;
     }
 
-    auto process_accepted(const accept_handler handler) noexcept
-      -> work_done final;
+    auto process_accepted(const accept_handler handler) noexcept -> work_done final;
 
 private:
     auto _checkup() noexcept -> work_done;
@@ -751,8 +746,8 @@ private:
     shared_holder<posix_mqueue_shared_state> _shared_state;
 };
 //------------------------------------------------------------------------------
-auto posix_mqueue_acceptor::process_accepted(
-  const accept_handler handler) noexcept -> work_done {
+auto posix_mqueue_acceptor::process_accepted(const accept_handler handler) noexcept
+  -> work_done {
     auto fetch_handler = [this, &handler](
                            [[maybe_unused]] const message_id msg_id,
                            const message_age,
@@ -808,8 +803,7 @@ void posix_mqueue_acceptor::_handle_receive(
       [data](message_id& msg_id, message_timestamp&, stored_message& message) {
           block_data_source source(as_bytes(data));
           default_deserializer_backend backend(source);
-          const auto deserialized{
-            deserialize_message(msg_id, message, backend)};
+          const auto deserialized{deserialize_message(msg_id, message, backend)};
           if(is_special_message(msg_id)) [[likely]] {
               if(msg_id.has_method("pmqConnect")) [[likely]] {
                   return bool(deserialized);
@@ -849,10 +843,7 @@ public:
     auto make_connector(const string_view address) noexcept
       -> shared_holder<connection> final {
         return {
-          hold<posix_mqueue_connector>,
-          *this,
-          to_string(address),
-          _shared_state};
+          hold<posix_mqueue_connector>, *this, to_string(address), _shared_state};
     }
 
 private:
@@ -869,8 +860,7 @@ private:
 };
 #endif // EAGINE_POSIX
 //------------------------------------------------------------------------------
-auto make_posix_mqueue_connection_factory(
-  [[maybe_unused]] main_ctx_parent parent)
+auto make_posix_mqueue_connection_factory([[maybe_unused]] main_ctx_parent parent)
   -> unique_holder<connection_factory> {
 #if EAGINE_POSIX
     return {hold<posix_mqueue_connection_factory>, parent};
@@ -880,4 +870,3 @@ auto make_posix_mqueue_connection_factory(
 }
 //------------------------------------------------------------------------------
 } // namespace eagine::msgbus
-

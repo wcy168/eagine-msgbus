@@ -42,12 +42,9 @@ void message_is_special(auto& s) {
     test.check(
       eagine::msgbus::is_special_message(eagine::msgbus::msgbus_id{"test3"}),
       "test3");
-    test.check(
-      eagine::msgbus::is_special_message({"eagiMsgBus", "ping"}), "ping");
-    test.check(
-      eagine::msgbus::is_special_message({"eagiMsgBus", "pong"}), "pong");
-    test.check(
-      not eagine::msgbus::is_special_message({"some", "message"}), "some");
+    test.check(eagine::msgbus::is_special_message({"eagiMsgBus", "ping"}), "ping");
+    test.check(eagine::msgbus::is_special_message({"eagiMsgBus", "pong"}), "pong");
+    test.check(not eagine::msgbus::is_special_message({"some", "message"}), "some");
     test.check(
       not eagine::msgbus::is_special_message({"other", "message"}), "other");
 }
@@ -70,8 +67,8 @@ void message_serialize_header_roundtrip_m(
         message.add_age(std::chrono::seconds{1});
         eagine::msgbus::default_serializer_backend write_backend{sink};
 
-        const auto serialized{eagine::msgbus::serialize_message_header(
-          msg_id, message, write_backend)};
+        const auto serialized{
+          eagine::msgbus::serialize_message_header(msg_id, message, write_backend)};
         test.ensure(bool(serialized), "serialized");
 
         eagine::block_data_source source{sink.done()};
@@ -131,8 +128,8 @@ void message_serialize_message_roundtrip_m_1(
             message.add_age(age);
             eagine::msgbus::default_serializer_backend write_backend{sink};
 
-            const auto serialized{eagine::msgbus::serialize_message(
-              msg_id, message, write_backend)};
+            const auto serialized{
+              eagine::msgbus::serialize_message(msg_id, message, write_backend)};
             test.ensure(bool(serialized), "serialized");
 
             eagine::block_data_source source{sink.done()};
@@ -200,8 +197,8 @@ void message_serialize_message_roundtrip_m_2(
             message.add_age(age);
             eagine::msgbus::default_serializer_backend write_backend{sink};
 
-            const auto serialized{eagine::msgbus::serialize_message(
-              msg_id, message, write_backend)};
+            const auto serialized{
+              eagine::msgbus::serialize_message(msg_id, message, write_backend)};
             test.ensure(bool(serialized), "serialized");
 
             eagine::block_data_source source{sink.done()};
@@ -209,8 +206,8 @@ void message_serialize_message_roundtrip_m_2(
             eagine::message_id msg_id_d;
             eagine::msgbus::stored_message dest;
 
-            const auto deserialized{eagine::msgbus::deserialize_message(
-              msg_id_d, dest, read_backend)};
+            const auto deserialized{
+              eagine::msgbus::deserialize_message(msg_id_d, dest, read_backend)};
             test.ensure(bool(deserialized), "deserialized");
 
             test.check(msg_id.class_() == msg_id_d.class_(), "class ok");
@@ -253,9 +250,8 @@ void message_serialize_message_type_roundtrip(unsigned, auto& s) {
          orig_msg_id, eagine::cover(buffer))}) {
 
         eagine::message_id read_msg_id;
-        if(const auto deserialized{
-             eagine::msgbus::default_deserialize_message_type(
-               read_msg_id, *serialized)}) {
+        if(const auto deserialized{eagine::msgbus::default_deserialize_message_type(
+             read_msg_id, *serialized)}) {
 
             trck.checkpoint(1);
         } else {
@@ -617,8 +613,7 @@ void connection_in_out_messages_push_fetch(unsigned, auto& s) {
         test.check(msg_age.count() >= 0, "age");
         test.check(
           eagine::are_equal(
-            msg.content(),
-            eagine::memory::as_bytes(msg_id.class_().name().view())),
+            msg.content(), eagine::memory::as_bytes(msg_id.class_().name().view())),
           "content");
         trck.checkpoint(2);
         ++ninc;
